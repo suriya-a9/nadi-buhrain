@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
 const serviceRouter = require('./modules/service/service.routes');
+const adminRouter = require('./modules/admin/admin.routes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,6 +28,7 @@ app.use(limiter);
 connectDb();
 
 app.use('/api/service', serviceRouter);
+app.use('/api/admin', adminRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
