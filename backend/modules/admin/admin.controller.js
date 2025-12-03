@@ -36,7 +36,7 @@ exports.adminLogin = async (req, res, next) => {
                 message: 'Password not match',
             })
         }
-        const token = jwt.verify(
+        const token = jwt.sign(
             { id: admin._id, email: admin.email, name: admin.name },
             config.jwt,
             { expiresIn: '1d' }

@@ -1,5 +1,4 @@
 const Loading = require("./loading.model");
-const logger = require('../../../logger');
 
 exports.uploadLoadingScreen = async (req, res, next) => {
   try {
