@@ -11,6 +11,7 @@ const rateLimit = require("express-rate-limit");
 const serviceRouter = require("./modules/service/service.routes");
 const adminRouter = require("./modules/admin/admin.routes");
 const loadingRouter = require("./modules/user/loadingScreen/loading.routes");
+const introRouter = require("./modules/user/introScreen/intro.routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +32,7 @@ connectDb();
 app.use("/api/admin", adminRouter);
 app.use("/api/user/loading", loadingRouter);
 app.use("/api/service", serviceRouter);
+app.use("/api/intro", introRouter)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
