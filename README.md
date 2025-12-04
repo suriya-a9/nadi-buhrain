@@ -19,7 +19,7 @@ Main idea:
 ---
 
 ## Project Structure (only for this repo)
-/backend -> Node.js + Express API 
-/admin-panel -> React.js frontend for admin
+- backend -> Node.js + Express API 
+- admin-panel -> React.js frontend for admin
 
 ---
