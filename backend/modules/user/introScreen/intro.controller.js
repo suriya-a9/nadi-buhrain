@@ -36,3 +36,20 @@ exports.getIntro = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.updateIntro = async (req, res, next) => {
+    const { id, ...updateFields } = req.body;
+    try {
+        const updateData = await Intro.findByIdAndUpdate(
+            id,
+            updateFields,
+            { new: true }
+        )
+        res.status(200).json({
+            message: 'updated',
+            data: updateData
+        })
+    } catch (err) {
+        next(err);
+    }
+}
