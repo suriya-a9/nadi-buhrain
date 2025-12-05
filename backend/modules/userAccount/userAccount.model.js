@@ -48,6 +48,10 @@ const userAccountSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    accountVerification: {
+        type: String,
+        default: "not verified"
+    },
     status: {
         type: String,
         enum: ["draft", "pending_otp", "completed"],
