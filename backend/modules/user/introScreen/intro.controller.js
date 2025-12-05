@@ -53,3 +53,15 @@ exports.updateIntro = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.deleteIntro = async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await Intro.findByIdAndDelete(id);
+        res.status(200).json({
+            message: 'Intro deleted successfully'
+        })
+    } catch (err) {
+        next(err);
+    }
+}

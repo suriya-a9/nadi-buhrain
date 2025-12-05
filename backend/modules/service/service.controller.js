@@ -13,3 +13,42 @@ exports.createService = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.updateService = async (req, res, next) => {
+    const { id, ...updateFields } = req.body;
+    try {
+        await Service.findByIdAndUpdate(
+            id,
+            updateFields,
+            { new: true }
+        );
+        res.status(200).json({
+            message: "Service updated successfully"
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.listService = async (req, res, next) => {
+    try {
+        const serviceList = await Service.find();
+        res.status(200).json({
+            data: serviceList
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.deleteService = async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await Service.findByIdAndDelete(id);
+        res.status(200).json({
+            message: "Deleted successfully"
+        })
+    } catch (err) {
+        next(err)
+    }
+}

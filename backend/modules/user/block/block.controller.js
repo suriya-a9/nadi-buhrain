@@ -35,3 +35,32 @@ exports.listRoadWithBlock = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.updateBlock = async (req, res, next) => {
+  const { id, ...updateFields } = req.body;
+  try {
+    const blockData = await Block.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    )
+    res.status(200).json({
+      message: "Updated successfully",
+      data: blockData
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+exports.deleteBlock = async (req, res, next) => {
+  const { id } = req.body;
+  try {
+    await Block.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Deleted successfully"
+    })
+  } catch (err) {
+    next(err)
+  }
+}

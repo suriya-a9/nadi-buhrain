@@ -25,3 +25,33 @@ exports.listRoad = async (req, res, next) => {
     next(err);
   }
 };
+
+
+exports.updateRoad = async (req, res, next) => {
+  const { id, ...updateFields } = req.body;
+  try {
+    const updateRoad = await Road.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    )
+    res.status(200).json({
+      message: 'updated successfully',
+      data: updateRoad
+    })
+  } catch (err) {
+    next(err);
+  }
+}
+
+exports.deleteRoad = async (req, res, next) => {
+  const { id } = req.body;
+  try {
+    await Road.findByIdAndDelete(id);
+    res.status(200).json({
+      message: 'Deleted successfully'
+    })
+  } catch (err) {
+    next(err)
+  }
+}

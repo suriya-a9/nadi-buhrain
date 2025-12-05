@@ -74,3 +74,15 @@ exports.updateLoadingScreen = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteLoadingScreen = async (req, res, next) => {
+  const { id } = req.body;
+  try {
+    await Loading.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Deleted successfully"
+    })
+  } catch (err) {
+    next(err)
+  }
+}
