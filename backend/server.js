@@ -16,6 +16,7 @@ const accountTypeRouter = require("./modules/user/accountType/account.routes");
 const roadRouter = require("./modules/user/road/road.routes");
 const blockRouter = require("./modules/user/block/block.routes");
 const userAccountRouter = require("./modules/userAccount/userAccount.routes");
+const termsRouter = require("./modules/adminPanel/termsAndCondition/terms.routes");
 const accountVerificationRouter = require("./modules/adminPanel/accountVerification/accountVerification.routes");
 
 app.use(express.json());
@@ -43,6 +44,7 @@ app.use("/api/road", roadRouter);
 app.use("/api/block", blockRouter);
 app.use("/api/user-account", userAccountRouter);
 app.use("/api/account-verify", accountVerificationRouter);
+app.use("/api/terms", termsRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

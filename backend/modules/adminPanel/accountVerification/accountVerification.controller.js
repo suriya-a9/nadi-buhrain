@@ -22,7 +22,10 @@ exports.verifyAccount = async (req, res, next) => {
 
 exports.verificaionAccountList = async (req, res, next) => {
     try {
-        const accountList = await UserAccount.find({})
+        const accountList = await UserAccount.find({ accountVerification: "not verified" });
+        res.status(200).json({
+            data: accountList
+        })
     } catch (err) {
         next(err)
     }
