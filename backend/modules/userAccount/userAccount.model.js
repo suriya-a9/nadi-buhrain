@@ -56,6 +56,9 @@ const userAccountSchema = new mongoose.Schema({
         type: String,
         default: "not verified"
     },
+    points: {
+        type: Number
+    },
     status: {
         type: String,
         enum: ["draft", "pending_otp", "completed"],

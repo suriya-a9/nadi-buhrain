@@ -18,6 +18,8 @@ const blockRouter = require("./modules/user/block/block.routes");
 const userAccountRouter = require("./modules/userAccount/userAccount.routes");
 const termsRouter = require("./modules/adminPanel/termsAndCondition/terms.routes");
 const accountVerificationRouter = require("./modules/adminPanel/accountVerification/accountVerification.routes");
+const pointsRouter = require("./modules/adminPanel/points/points.routes");
+const issueRouter = require("./modules/issue/issue.routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +47,8 @@ app.use("/api/block", blockRouter);
 app.use("/api/user-account", userAccountRouter);
 app.use("/api/account-verify", accountVerificationRouter);
 app.use("/api/terms", termsRouter);
+app.use("/api/points", pointsRouter);
+app.use("/api/issue", issueRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
