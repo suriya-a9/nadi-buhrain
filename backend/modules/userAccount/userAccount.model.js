@@ -44,6 +44,10 @@ const userAccountSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    termsVerfied: {
+        type: Boolean,
+        default: false
+    },
     singnUpCompleted: {
         type: Boolean,
         default: false

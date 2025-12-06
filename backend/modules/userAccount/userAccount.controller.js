@@ -212,6 +212,25 @@ exports.addFamilyMember = async (req, res, next) => {
     }
 }
 
+exports.termsAndConditionVerify = async (req, res, next) => {
+    const { userId } = req.body;
+    try {
+        if (!req.body.userId) {
+            res.status(400).json({
+                message: "user id needed"
+            })
+        }
+        await UserAccount.findByIdAndUpdate(userId, {
+            termsVerfied: true
+        })
+        res.status(200).json({
+            message: "verified successfully"
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 exports.completeSignUp = async (req, res, next) => {
     const { userId } = req.body;
     try {
@@ -235,6 +254,9 @@ exports.completeSignUp = async (req, res, next) => {
                     message: "Please add all family members before completing signup"
                 });
             }
+        }
+        if (!user.termsVerfied) {
+            return res.status(400).json({ message: "need to accept terms and condition" });
         }
         user.status = "completed";
         user.singnUpCompleted = true;
@@ -304,3 +326,48 @@ exports.signIn = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.updateBasicInfoAndAddress = async (req, res, next) => {
+    const { userId, basicInfo, address } = req.body;
+
+    try {
+        if (basicInfo) {
+            const updateBasic = {};
+
+            for (const key in basicInfo) {
+                if (key === "password") {
+                    updateBasic["basicInfo.password"] =
+                        await bcrypt.hash(basicInfo.password, 10);
+                } else {
+                    updateBasic[`basicInfo.${key}`] = basicInfo[key];
+                }
+            }
+
+            await UserAccount.findByIdAndUpdate(
+                userId,
+                { $set: updateBasic },
+                { new: true }
+            );
+        }
+        if (address) {
+            const updateAddress = {};
+
+            for (const key in address) {
+                updateAddress[key] = address[key];
+            }
+
+            await Address.findOneAndUpdate(
+                { userId },
+                { $set: updateAddress },
+                { new: true, upsert: true }
+            );
+        }
+
+        res.status(200).json({
+            message: "Basic info and address updated successfully"
+        });
+
+    } catch (err) {
+        next(err);
+    }
+};

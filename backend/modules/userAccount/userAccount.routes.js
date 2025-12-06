@@ -14,9 +14,12 @@ router.post("/upload-id", upload.array("idProof", 5), controller.uploadIdProof);
 router.post("/family-count", controller.saveFamilyCount);
 router.post("/add-family-member", controller.addFamilyMember);
 
+router.post("/terms-verify", controller.termsAndConditionVerify);
+
 router.post("/complete", controller.completeSignUp);
 
 router.post('/profile', controller.userprofile);
+router.post('/profile-update', controller.updateBasicInfoAndAddress);
 
 router.post('/signin', controller.signIn)
 
