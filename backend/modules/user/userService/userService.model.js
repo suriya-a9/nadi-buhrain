@@ -11,7 +11,12 @@ const userServiceSchema = new mongoose.Schema({
     },
     issuesId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Issue"
+        ref: "Issue",
+        default: null
+    },
+    otherIssue: {
+        type: String,
+        default: null
     },
     serviceRequestID: {
         type: String
@@ -32,9 +37,22 @@ const userServiceSchema = new mongoose.Schema({
     },
     serviceStatus: {
         type: String,
-        enum: ["pending", "inProgress", "resolved"],
-        default: "pending"
-    }
+        enum: [
+            "submitted",
+            "processing",
+            "technicianAssigned",
+            "inProgress",
+            "completed"
+        ],
+        default: "submitted"
+    },
+    statusTimestamps: {
+        submitted: { type: Date, default: null },
+        processing: { type: Date, default: null },
+        technicianAssigned: { type: Date, default: null },
+        inProgress: { type: Date, default: null },
+        completed: { type: Date, default: null }
+    },
 }, { timestamps: true });
 
 userServiceSchema.pre('save', async function () {
