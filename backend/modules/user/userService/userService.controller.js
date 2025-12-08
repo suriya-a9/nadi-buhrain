@@ -52,7 +52,8 @@ exports.userServiceList = async (req, res, next) => {
         }
         const userServicesList = await UserService.find({ userId: userId })
             .populate('serviceId')
-            .populate('issuesId');
+            .populate('issuesId')
+            .populate('technicianId')
         const formattedList = userServicesList.map(service => {
             const formattedTimestamps = {};
             Object.entries(service.statusTimestamps).forEach(([key, value]) => {

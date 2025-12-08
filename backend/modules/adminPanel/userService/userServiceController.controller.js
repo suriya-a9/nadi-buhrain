@@ -59,3 +59,35 @@ exports.updateServiceStatus = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.assignTechnician = async (req, res, next) => {
+    const { serviceId, technicianId } = req.body;
+    try {
+        if (!serviceId || !technicianId) {
+            return res.status(400).json({ message: "serviceId and technicianId are required" });
+        }
+
+        const updatedService = await UserService.findByIdAndUpdate(
+            serviceId,
+            {
+                $set: {
+                    technicianId: technicianId,
+                    serviceStatus: "technicianAssigned",
+                    [`statusTimestamps.technicianAssigned`]: new Date()
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedService) {
+            return res.status(404).json({ message: "Service request not found" });
+        }
+
+        res.status(200).json({
+            message: "Technician assigned and status updated",
+            data: updatedService
+        });
+    } catch (err) {
+        next(err);
+    }
+}

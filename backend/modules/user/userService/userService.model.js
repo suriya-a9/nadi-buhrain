@@ -9,6 +9,10 @@ const userServiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Service"
     },
+    technicianId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Technician"
+    },
     issuesId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Issue",

@@ -111,3 +111,14 @@ exports.profile = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.technicianList = async (req, res, next) => {
+    try {
+        const technicianList = await Technician.find();
+        res.status(200).json({
+            data: technicianList
+        })
+    } catch (err) {
+        next(err);
+    }
+}
