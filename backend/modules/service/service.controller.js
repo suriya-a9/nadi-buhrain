@@ -3,8 +3,12 @@ const Service = require('./service.model');
 exports.createService = async (req, res, next) => {
     const { name } = req.body;
     try {
+        const serviceImage = req.files?.serviceImage?.[0]?.filename;
+        const serviceLogo = req.files?.serviceLogo?.[0]?.filename;
         await Service.create({
-            name
+            name,
+            serviceImage,
+            serviceLogo
         });
         res.status(201).json({
             message: 'Service created'
@@ -17,6 +21,12 @@ exports.createService = async (req, res, next) => {
 exports.updateService = async (req, res, next) => {
     const { id, ...updateFields } = req.body;
     try {
+        if (req.files?.serviceImage) {
+            updateFields.serviceImage = req.files.serviceImage[0].filename;
+        }
+        if (req.files?.serviceLogo) {
+            updateFields.serviceLogo = req.files.serviceLogo[0].filename;
+        }
         await Service.findByIdAndUpdate(
             id,
             updateFields,

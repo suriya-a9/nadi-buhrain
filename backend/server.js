@@ -20,6 +20,7 @@ const termsRouter = require("./modules/adminPanel/termsAndCondition/terms.routes
 const accountVerificationRouter = require("./modules/adminPanel/accountVerification/accountVerification.routes");
 const pointsRouter = require("./modules/adminPanel/points/points.routes");
 const issueRouter = require("./modules/issue/issue.routes");
+const userServiceRouter = require("./modules/user/userService/userService.routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,6 +50,7 @@ app.use("/api/account-verify", accountVerificationRouter);
 app.use("/api/terms", termsRouter);
 app.use("/api/points", pointsRouter);
 app.use("/api/issue", issueRouter);
+app.use("/api/user-service", userServiceRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
