@@ -63,7 +63,12 @@ exports.servicesList = async (req, res, next) => {
             technicianId,
             status: 'accepted'
         });
-
+        if (!assignments.length) {
+            return res.status(200).json({
+                message: "no requests yet",
+                data: []
+            });
+        }
         const userServiceIds = assignments.map(a => a.userServiceId);
 
         const services = await UserService.find({ _id: { $in: userServiceIds } })
@@ -93,5 +98,13 @@ exports.servicesList = async (req, res, next) => {
         });
     } catch (err) {
         next(err);
+    }
+}
+
+exports.startWork = async (req, res, next) => {
+    try {
+
+    } catch (err) {
+        next(err)
     }
 }

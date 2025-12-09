@@ -8,6 +8,8 @@ import DashboardLayout from "./layout/DashboardLayout";
 import { AuthProvider } from "./context/AuthContext";
 import Services from "./pages/Services";
 import PrivateRoute from "./components/PrivateRoute";
+import User from "./pages/User";
+import Technicians from "./pages/Technicians";
 
 export default function App() {
   return (
@@ -48,6 +50,26 @@ export default function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <Services />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <User />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/technicians"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Technicians />
                 </DashboardLayout>
               </PrivateRoute>
             }

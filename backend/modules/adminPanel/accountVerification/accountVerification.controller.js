@@ -46,3 +46,16 @@ exports.verificaionAccountList = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.usersList = async (req, res, next) => {
+    try {
+        const listacceptedUsers = await UserAccount.find({ accountVerification: "verified" })
+        .populate("accountTypeId")
+        .populate()
+        res.status(200).json({
+            data: listacceptedUsers
+        })
+    } catch (err) {
+        next(err)
+    }
+}

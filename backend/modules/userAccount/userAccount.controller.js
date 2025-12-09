@@ -6,6 +6,7 @@ const Address = require('../address/address.model');
 const config = require('../../config/default');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Notification =require('../adminPanel/notification/notification.model');
 
 exports.startSignUp = async (req, res, next) => {
     const { accountTypeId } = req.body;
@@ -52,7 +53,7 @@ exports.saveBasicInfo = async (req, res, next) => {
 }
 
 exports.saveAddress = async (req, res, next) => {
-    const { userId, city, building, aptNo, roadId, blockId } = req.body;
+    const { userId, address } = req.body;
     try {
         if (!req.body.userId) {
             return res.status(400).json({
@@ -61,12 +62,8 @@ exports.saveAddress = async (req, res, next) => {
         }
         await Address.create({
             userId,
-            city,
-            building,
-            aptNo,
-            roadId,
-            blockId
-        })
+            ...address
+        });
 
         await UserAccount.findByIdAndUpdate(userId, { step: 3 });
         res.status(200).json({
@@ -142,42 +139,16 @@ exports.uploadIdProof = async (req, res, next) => {
     }
 }
 
-exports.saveFamilyCount = async (req, res, next) => {
-    const { userId, familyCount } = req.body;
-    try {
-        if (!req.body.userId) {
-            res.status(400).json({
-                message: "user id needed"
-            })
-        }
-        const user = await UserAccount.findByIdAndUpdate(
-            userId,
-            { familyCount, familyMembersAdded: 0 },
-            { new: true }
-        );
-
-        res.status(200).json({
-            message: "Family count saved",
-            data: user
-        });
-    } catch (err) {
-        next(err);
-    }
-}
-
 exports.addFamilyMember = async (req, res, next) => {
     const {
         userId,
+        familyCount,
         fullName,
         relation,
         mobile,
         email,
         gender,
-        city,
-        building,
-        aptNo,
-        roadId,
-        blockId
+        address
     } = req.body;
     try {
         if (!req.body.userId) {
@@ -192,13 +163,12 @@ exports.addFamilyMember = async (req, res, next) => {
             mobile,
             email,
             gender,
-            city,
-            building,
-            aptNo,
-            roadId,
-            blockId
+            ...address
         });
         const user = await UserAccount.findById(userId);
+        if (familyCount) {
+            user.familyCount = familyCount;
+        }
         user.familyMembersAdded += 1;
         await user.save();
         const isComplete = user.familyMembersAdded === user.familyCount;
@@ -261,6 +231,15 @@ exports.completeSignUp = async (req, res, next) => {
         user.status = "completed";
         user.singnUpCompleted = true;
         await user.save();
+        const notification = await Notification.create({
+            type: 'signup',
+            message: `New user registered: ${user.basicInfo.fullName}`,
+            userId: user._id,
+            time: new Date(),
+            read: false
+        });
+        const io = req.app.get('io');
+        io.emit('notification', notification);
         res.status(200).json({
             message: 'user registered successfully',
             data: user

@@ -7,6 +7,9 @@ const connectDb = require("./config/db");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
 
 const serviceRouter = require("./modules/service/service.routes");
 const adminRouter = require("./modules/admin/admin.routes");
@@ -25,6 +28,7 @@ const userServiceAdminSideRouter = require("./modules/adminPanel/userService/use
 const technicalSkillSetRouter = require("./modules/adminPanel/technicianSkillSet/technicianSkillSet.routes");
 const technicianRouter = require("./modules/adminPanel/technician/technician.routes");
 const technicianPanelRouter = require("./modules/technician/technician.routes");
+const notificationRouter = require("./modules/adminPanel/notification/notification.routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -60,6 +64,7 @@ app.use("/api/user-service-list", userServiceAdminSideRouter);
 app.use("/api/technical", technicalSkillSetRouter);
 app.use("/api/technician", technicianRouter);
 app.use("/api/techie", technicianPanelRouter);
+app.use("/api/notifications", notificationRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -68,5 +73,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = config.port || 5000;
-app.listen(port, () => logger.info(`Server running at ${port}`));
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+app.set('io', io);
+
+server.listen(config.port, () => {
+  logger.info(`Web socket server running on port ${config.port}`);
+});

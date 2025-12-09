@@ -5,17 +5,20 @@ const addressSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserAccount"
     },
+    addressType: {
+        type: String
+    },
     city: {
-        type: String,
-        required: true
+        type: String
     },
     building: {
-        type: String,
-        required: true,
+        type: String
+    },
+    floor: {
+        type: String
     },
     aptNo: {
-        type: Number,
-        required: true
+        type: Number
     },
     roadId: {
         type: mongoose.Schema.Types.ObjectId,

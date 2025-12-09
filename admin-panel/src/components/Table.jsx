@@ -1,8 +1,11 @@
+function getValue(obj, key) {
+    return key.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
 export default function Table({ columns = [], data = [], actions }) {
     return (
         <div className="bg-white rounded shadow overflow-hidden">
             <table className="w-full">
-
                 <thead className="bg-gray-100 border-b">
                     <tr>
                         {columns.map((col) => (
@@ -10,11 +13,9 @@ export default function Table({ columns = [], data = [], actions }) {
                                 {col.title}
                             </th>
                         ))}
-
                         {actions && <th className="p-3 font-medium">Actions</th>}
                     </tr>
                 </thead>
-
                 <tbody>
                     {data.length === 0 ? (
                         <tr>
@@ -33,10 +34,11 @@ export default function Table({ columns = [], data = [], actions }) {
                             >
                                 {columns.map((col) => (
                                     <td key={col.key} className="p-3">
-                                        {col.render ? col.render(row[col.key], row) : row[col.key]}
+                                        {col.render
+                                            ? col.render(getValue(row, col.key), row)
+                                            : getValue(row, col.key)}
                                     </td>
                                 ))}
-
                                 {actions && (
                                     <td className="p-3">
                                         {actions(row)}

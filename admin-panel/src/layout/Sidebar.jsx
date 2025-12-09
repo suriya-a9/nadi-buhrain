@@ -36,7 +36,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/services" className={linkClasses}>
                         Services
                     </NavLink>
-
+                    <NavLink to="/users" className={linkClasses}>
+                        Users
+                    </NavLink>
+                    <NavLink to="/technicians" className={linkClasses}>
+                        Technicians
+                    </NavLink>
                 </nav>
             </aside>
         </>

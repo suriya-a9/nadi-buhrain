@@ -11,7 +11,6 @@ router.post("/verify-otp", controller.verifyOtp);
 
 router.post("/upload-id", upload.array("idProof", 5), controller.uploadIdProof);
 
-router.post("/family-count", controller.saveFamilyCount);
 router.post("/add-family-member", controller.addFamilyMember);
 
 router.post("/terms-verify", controller.termsAndConditionVerify);

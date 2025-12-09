@@ -12,6 +12,12 @@ const familyMemberSchema = new mongoose.Schema({
         type: String,
         enum: ["wife", "daughter", "son"]
     },
+    addressType: {
+        type: String
+    },
+    floor: {
+        type: String
+    },
     mobile: {
         type: Number
     },
