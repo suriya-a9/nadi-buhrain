@@ -114,7 +114,8 @@ exports.profile = async (req, res, next) => {
 
 exports.technicianList = async (req, res, next) => {
     try {
-        const technicianList = await Technician.find();
+        const technicianList = await Technician.find()
+        .populate("role");
         res.status(200).json({
             data: technicianList
         })

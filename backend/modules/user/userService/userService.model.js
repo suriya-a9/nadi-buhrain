@@ -43,16 +43,20 @@ const userServiceSchema = new mongoose.Schema({
         type: String,
         enum: [
             "submitted",
-            "processing",
+            "accepted",
             "technicianAssigned",
             "inProgress",
             "completed"
         ],
         default: "submitted"
     },
+    technicianAccepted: {
+        type: Boolean,
+        default: false
+    },
     statusTimestamps: {
         submitted: { type: Date, default: null },
-        processing: { type: Date, default: null },
+        accepted: { type: Date, default: null },
         technicianAssigned: { type: Date, default: null },
         inProgress: { type: Date, default: null },
         completed: { type: Date, default: null }

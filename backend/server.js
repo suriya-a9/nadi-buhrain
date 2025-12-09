@@ -24,6 +24,7 @@ const userServiceRouter = require("./modules/user/userService/userService.routes
 const userServiceAdminSideRouter = require("./modules/adminPanel/userService/userServiceRoutes.routes");
 const technicalSkillSetRouter = require("./modules/adminPanel/technicianSkillSet/technicianSkillSet.routes");
 const technicianRouter = require("./modules/adminPanel/technician/technician.routes");
+const technicianPanelRouter = require("./modules/technician/technician.routes");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,6 +59,7 @@ app.use("/api/user-service", userServiceRouter);
 app.use("/api/user-service-list", userServiceAdminSideRouter);
 app.use("/api/technical", technicalSkillSetRouter);
 app.use("/api/technician", technicianRouter);
+app.use("/api/techie", technicianPanelRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

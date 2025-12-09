@@ -1,4 +1,5 @@
 const UserService = require('../../user/userService/userService.model');
+const TechnicianUserService = require('./technicianUserService.model');
 const formatDate = require('../../../utils/formatDate');
 
 exports.newUserServiceRequest = async (req, res, next) => {
@@ -32,7 +33,7 @@ exports.updateServiceStatus = async (req, res, next) => {
     try {
         const validStatuses = [
             "submitted",
-            "processing",
+            "accepted",
             "technicianAssigned",
             "inProgress",
             "completed"
@@ -67,26 +68,68 @@ exports.assignTechnician = async (req, res, next) => {
             return res.status(400).json({ message: "serviceId and technicianId are required" });
         }
 
-        const updatedService = await UserService.findByIdAndUpdate(
+        await UserService.findByIdAndUpdate(
             serviceId,
-            {
-                $set: {
-                    technicianId: technicianId,
-                    serviceStatus: "technicianAssigned",
-                    [`statusTimestamps.technicianAssigned`]: new Date()
-                }
-            },
-            { new: true }
+            { $set: { technicianId } }
         );
 
-        if (!updatedService) {
-            return res.status(404).json({ message: "Service request not found" });
-        }
+        const assignment = await TechnicianUserService.create({
+            technicianId,
+            userServiceId: serviceId,
+            status: 'pending'
+        });
 
         res.status(200).json({
-            message: "Technician assigned and status updated",
-            data: updatedService
+            message: "Technician assignment created and technicianId added to service",
+            data: assignment
         });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.technicianRespond = async (req, res, next) => {
+    const { assignmentId, action, reason } = req.body;
+    try {
+        const assignment = await TechnicianUserService.findById(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+
+        if (action === 'accept') {
+            assignment.status = 'accepted';
+            await assignment.save();
+
+            await UserService.findByIdAndUpdate(
+                assignment.userServiceId,
+                {
+                    $set: {
+                        serviceStatus: "technicianAssigned",
+                        technicianAccepted: true,
+                        technicianId: assignment.technicianId,
+                        [`statusTimestamps.technicianAssigned`]: new Date()
+                    }
+                }
+            );
+
+            return res.status(200).json({ message: "Service accepted and updated" });
+        } else if (action === 'reject') {
+            if (!reason) {
+                return res.status(400).json({ message: "Reason required for rejection" });
+            }
+            assignment.status = 'rejected';
+            assignment.reason = reason;
+            await assignment.save();
+
+            await UserService.findByIdAndUpdate(
+                assignment.userServiceId,
+                { $set: { technicianId: null } }
+            );
+
+            return res.status(200).json({ message: "Service rejected", data: assignment });
+        } else {
+            return res.status(400).json({ message: "Invalid action" });
+        }
     } catch (err) {
         next(err);
     }
