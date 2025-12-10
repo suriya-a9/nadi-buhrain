@@ -42,6 +42,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/technicians" className={linkClasses}>
                         Technicians
                     </NavLink>
+                    <NavLink to="/not-verified" className={linkClasses}>
+                        Not veirified user
+                    </NavLink>
                 </nav>
             </aside>
         </>

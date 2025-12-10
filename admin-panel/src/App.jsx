@@ -10,6 +10,7 @@ import Services from "./pages/Services";
 import PrivateRoute from "./components/PrivateRoute";
 import User from "./pages/User";
 import Technicians from "./pages/Technicians";
+import NotVerifiedUser from "./pages/NotVerifiedUser";
 
 export default function App() {
   return (
@@ -70,6 +71,16 @@ export default function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <Technicians />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/not-verified"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <NotVerifiedUser />
                 </DashboardLayout>
               </PrivateRoute>
             }

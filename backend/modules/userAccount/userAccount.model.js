@@ -63,6 +63,20 @@ const userAccountSchema = new mongoose.Schema({
         type: String,
         enum: ["draft", "pending_otp", "completed"],
         default: "draft"
+    },
+    isFamilyMember: {
+        type: Boolean,
+        default: false
+    },
+    familyOwnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UserAccount",
+        default: null
+    },
+    familyMemberRef: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FamilyMember",
+        default: null
     }
 }, { timestamps: true })
 

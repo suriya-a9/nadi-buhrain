@@ -1,5 +1,7 @@
 const UserAccount = require('../../userAccount/userAccount.model');
 const Points = require('../points/points.model');
+const FamilyMember = require('../../userAccount/familyMember.model');
+const Address = require('../../address/address.model');
 
 exports.verifyAccount = async (req, res, next) => {
     const { userId, status } = req.body;
@@ -38,10 +40,100 @@ exports.verifyAccount = async (req, res, next) => {
 
 exports.verificaionAccountList = async (req, res, next) => {
     try {
-        const accountList = await UserAccount.find({ accountVerification: "not verified" });
+        const users = await UserAccount.find({ accountVerification: "not verified" })
+            .populate('accountTypeId')
+            .lean();
+
+        const familyMembers = await FamilyMember.find().lean();
+        const combined = [...users];
+
+        for (const fm of familyMembers) {
+            const exists = await UserAccount.findOne({ "basicInfo.email": fm.email }).lean();
+            if (exists) continue;
+
+            let parentAccountType = null;
+            if (fm.userId) {
+                const parent = await UserAccount.findById(fm.userId).populate('accountTypeId').lean();
+                parentAccountType = parent?.accountTypeId || null;
+            }
+
+            combined.push({
+                _id: fm._id,
+                basicInfo: {
+                    fullName: fm.fullName,
+                    mobileNumber: fm.mobile,
+                    email: fm.email,
+                    gender: fm.gender
+                },
+                accountTypeId: parentAccountType,
+                isFamilyMember: true,
+                parentUserId: fm.userId,
+                addressId: fm.addressId || null,
+                accountVerification: "not verified",
+                createdAt: fm.createdAt
+            });
+        }
+
+        combined.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
         res.status(200).json({
-            data: accountList
-        })
+            data: combined
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.viewAccount = async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        const accountData = await UserAccount.findById(id)
+            .populate('accountTypeId')
+            .populate('familyOwnerId')
+            .lean();
+
+        if (accountData) {
+            const userAddresses = await Address.find({ userId: accountData._id })
+                .populate('roadId', 'name')
+                .populate('blockId', 'name')
+                .lean();
+
+            const familyMembers = await FamilyMember.find({ userId: accountData._id }).lean();
+            const familyWithAddress = await Promise.all(familyMembers.map(async fm => {
+                const addr = fm.addressId
+                    ? await Address.findById(fm.addressId)
+                        .populate('roadId', 'name')
+                        .populate('blockId', 'name')
+                        .lean()
+                    : null;
+                return { ...fm, address: addr || null };
+            }));
+
+            return res.status(200).json({
+                data: {
+                    type: 'user',
+                    user: accountData,
+                    addresses: userAddresses,
+                    familyMembers: familyWithAddress
+                }
+            });
+        }
+
+        const fm = await FamilyMember.findById(id).lean();
+        if (fm) {
+            const parentUser = fm.userId ? await UserAccount.findById(fm.userId).populate('accountTypeId').lean() : null;
+            const addr = fm.addressId ? await Address.findById(fm.addressId).lean() : null;
+            return res.status(200).json({
+                data: {
+                    type: 'familyMember',
+                    familyMember: fm,
+                    address: addr || null,
+                    parentUser: parentUser || null
+                }
+            });
+        }
+
+        return res.status(404).json({ message: 'data not found' });
     } catch (err) {
         next(err)
     }
@@ -50,8 +142,8 @@ exports.verificaionAccountList = async (req, res, next) => {
 exports.usersList = async (req, res, next) => {
     try {
         const listacceptedUsers = await UserAccount.find({ accountVerification: "verified" })
-        .populate("accountTypeId")
-        .populate()
+            .populate("accountTypeId")
+            .populate()
         res.status(200).json({
             data: listacceptedUsers
         })

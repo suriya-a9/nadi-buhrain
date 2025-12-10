@@ -2,18 +2,16 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Table from "../components/Table";
 
-export default function User() {
+export default function NotVerifiedUser() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [detailsOpen, setDetailsOpen] = useState(false);
 
-    const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
-
     const loadUsers = async () => {
         setLoading(true);
         try {
-            const res = await api.get("/account-verify/all-user-list");
+            const res = await api.get("/account-verify/list");
             setUsers(res.data.data || []);
         } catch (err) {
             console.error(err);
@@ -24,7 +22,7 @@ export default function User() {
 
     const viewDetails = async (id) => {
         try {
-            const res = await api.post("/account-verify/view", { id });
+            const res = await api.post(`/account-verify/view`, { id });
             setSelectedUser(res.data.data);
             setDetailsOpen(true);
         } catch (err) {
@@ -33,10 +31,29 @@ export default function User() {
         }
     };
 
+    const updateStatus = async (id, status, reason) => {
+        try {
+            const payload = { userId: id, status };
+            if (status === "rejected" && reason) payload.reason = reason;
+            await api.post("/account-verify", payload);
+            await loadUsers();
+            setDetailsOpen(false);
+            alert(`User ${status}`);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to update status");
+        }
+    };
+
     useEffect(() => {
         loadUsers();
     }, []);
 
+    const getUserDoc = (selected) => {
+        if (!selected) return null;
+        return selected.user || selected;
+    };
+    const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
     const renderIdProofs = (files = []) => {
         if (!files || !files.length) return <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>;
         return (
@@ -46,11 +63,16 @@ export default function User() {
                     const ext = f.split('.').pop().toLowerCase();
                     const isImage = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext);
                     return (
-                        <div key={i} className="p-2 border rounded bg-gray-50 dark:bg-gray-700" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            {isImage && <div className="mt-2"><img src={url} alt={f} className="max-h-40 w-auto rounded" /></div>}
-                            <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all">
-                                view
-                            </a>
+                        <div key={i} className="p-2 border rounded bg-gray-50">
+                            {isImage && (
+                                <div className="mt-2" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src={url} alt={`id-proof-${i}`} className="max-h-40 w-auto rounded" />
+
+                                    <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all">
+                                        view
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
@@ -58,16 +80,9 @@ export default function User() {
         );
     };
 
-    const getUserDoc = (selected) => {
-        if (!selected) return null;
-        return selected.user || selected;
-    };
-
     return (
         <div>
-            <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold">Users</h2>
-            </div>
+            <h2 className="text-2xl font-semibold mb-4">Unverified Users</h2>
 
             <Table
                 columns={[
@@ -86,6 +101,22 @@ export default function User() {
                         >
                             View
                         </button>
+                        <button
+                            onClick={() => updateStatus(row._id, "verified")}
+                            className="px-2 py-1 bg-green-500 text-white rounded text-sm"
+                        >
+                            Verify
+                        </button>
+                        <button
+                            onClick={() => {
+                                const reason = prompt("Please enter rejection reason:");
+                                if (!reason) return alert("Rejection reason is required");
+                                updateStatus(row._id, "rejected", reason);
+                            }}
+                            className="px-2 py-1 bg-red-500 text-white rounded text-sm"
+                        >
+                            Reject
+                        </button>
                     </div>
                 )}
             />
@@ -96,40 +127,83 @@ export default function User() {
                 const isUser = selectedUser.type === 'user';
                 const user = getUserDoc(selectedUser);
                 if (!user) return null;
+
                 const familyMembers = isUser ? (selectedUser.familyMembers || []) : [];
-
-                const owner = user.familyOwnerId && typeof user.familyOwnerId === "object" ? user.familyOwnerId : null;
+                const owner = user.familyOwnerId && typeof user.familyOwnerId === "object"
+                    ? user.familyOwnerId
+                    : null;
                 const ownerId = owner ? owner._id : (user.familyOwnerId || null);
-
                 return (
                     <div className="fixed inset-0 z-50 overflow-auto">
                         <div className="min-h-screen flex items-start justify-center py-8 px-4">
-                            <div className="absolute inset-0 bg-black opacity-40" onClick={() => setDetailsOpen(false)} />
-                            <div className="relative bg-white text-black dark:text-white p-6 rounded shadow-lg max-w-4xl w-full z-10 max-h-[90vh] overflow-auto">
+                            <div
+                                className="absolute inset-0 bg-black opacity-40"
+                                onClick={() => setDetailsOpen(false)}
+                            />
+                            <div className="relative bg-white text-black dark:text-white p-6 rounded shadow-lg max-w-3xl w-full z-10 max-h-[90vh] overflow-auto">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-lg font-semibold">User Details</h3>
-                                    <button onClick={() => setDetailsOpen(false)} className="text-sm text-gray-500">Close</button>
+                                    <h3 className="text-lg font-semibold">Details</h3>
+                                    <button
+                                        onClick={() => setDetailsOpen(false)}
+                                        className="text-sm text-gray-500"
+                                    >
+                                        Close
+                                    </button>
                                 </div>
-
                                 {user.isFamilyMember && (
                                     <div className="mb-4 p-3 border rounded bg-gray-50 dark:bg-gray-700">
-                                        <div className="text-xs text-gray-500">Belongs to</div>
-                                        <div className="text-sm font-medium">{owner ? owner.basicInfo?.fullName : `Owner ID: ${ownerId}`}</div>
-                                        <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.email : null}</div>
-                                        <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.mobileNumber : null}</div>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <div className="text-xs text-gray-500">Belongs to</div>
+                                                <div className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                                                    {owner ? owner.basicInfo?.fullName : `Owner ID: ${ownerId}`}
+                                                </div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.email : null}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.mobileNumber : null}</div>
+                                            </div>
+
+                                            {ownerId && (
+                                                <div className="flex items-center gap-2">
+                                                    {/* {owner && owner.idProofUrl && owner.idProofUrl.length > 0 && (
+                                                        <button
+                                                            onClick={() => {
+                                                                const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
+                                                                const url = `${API_BASE}/uploads/${owner.idProofUrl[0]}`;
+                                                                window.open(url, "_blank");
+                                                            }}
+                                                            className="px-2 py-1 text-sm bg-gray-200 rounded"
+                                                        >
+                                                            View Owner ID
+                                                        </button>
+                                                    )} */}
+
+                                                    <button
+                                                        onClick={() => {
+                                                            if (ownerId) viewDetails(ownerId);
+                                                        }}
+                                                        className="px-2 py-1 text-sm bg-gray-200 rounded"
+                                                    >
+                                                        View Owner
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
 
                                         {owner && owner.idProofUrl && owner.idProofUrl.length > 0 && (
                                             <div className="mt-3">
                                                 <div className="text-xs text-gray-500 mb-2">Owner ID Proofs</div>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {owner.idProofUrl.map((f, i) => {
+                                                        const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
                                                         const url = `${API_BASE}/uploads/${f}`;
                                                         const ext = f.split('.').pop().toLowerCase();
                                                         const isImage = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext);
                                                         return (
                                                             <div key={i} className="p-2 border rounded bg-white" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                                                 {isImage && <img src={url} alt={f} className="mt-2 max-h-28 rounded" />}
-                                                                <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all text-sm">view</a>
+                                                                <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all text-sm">
+                                                                    view
+                                                                </a>
                                                             </div>
                                                         );
                                                     })}
@@ -138,7 +212,6 @@ export default function User() {
                                         )}
                                     </div>
                                 )}
-
                                 <div className="grid grid-cols-2 gap-3 text-sm mb-4">
                                     <div>
                                         <div className="font-medium">ID</div>
@@ -147,12 +220,16 @@ export default function User() {
 
                                     <div>
                                         <div className="font-medium">Account Type</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.accountTypeId?.name || "—"}</div>
+                                        <div className="text-gray-700 dark:text-gray-300">
+                                            {user.accountTypeId?.name || "—"}
+                                        </div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Full Name</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.basicInfo?.fullName || "—"}</div>
+                                        <div className="text-gray-700 dark:text-gray-300">
+                                            {user.basicInfo?.fullName || "—"}
+                                        </div>
                                     </div>
 
                                     <div>
@@ -181,7 +258,7 @@ export default function User() {
                                     </div>
                                 </div>
 
-                                {selectedUser.addresses && selectedUser.addresses.length > 0 && (
+                                {isUser && selectedUser.addresses && selectedUser.addresses.length > 0 && (
                                     <>
                                         <div className="font-medium mb-2">Addresses</div>
                                         <div className="grid gap-3 mb-4">
@@ -202,12 +279,10 @@ export default function User() {
                                         </div>
                                     </>
                                 )}
-
                                 <div className="mb-4">
                                     <div className="font-medium mb-2">ID Proofs</div>
-                                    {renderIdProofs(user.idProofUrl)}
+                                    {isUser ? renderIdProofs(user.idProofUrl) : <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>}
                                 </div>
-
                                 <div className="mb-4">
                                     <div className="font-medium mb-2">Family Members</div>
                                     {familyMembers.length === 0 ? (
@@ -215,7 +290,7 @@ export default function User() {
                                     ) : (
                                         <div className="space-y-2">
                                             {familyMembers.map((fm) => (
-                                                <div key={fm._id} className="p-3 border rounded bg-gray-50 dark:bg-gray-700">
+                                                <div key={fm._id} className="p-3 border rounded bg-gray-50">
                                                     <div className="grid grid-cols-2 gap-2 text-sm">
                                                         <div>
                                                             <div className="text-xs text-gray-500">Name</div>
@@ -248,10 +323,13 @@ export default function User() {
                                                                 <div className="text-gray-700 dark:text-gray-300">No address</div>
                                                             )}
                                                         </div>
-
                                                         <div className="col-span-2 mt-2">
                                                             <div className="text-xs text-gray-500">Family Member ID Proofs</div>
-                                                            {fm.idProofUrl ? renderIdProofs(fm.idProofUrl) : <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>}
+                                                            {fm.addressId || fm.idProofUrl ? (
+                                                                fm.idProofUrl ? renderIdProofs(fm.idProofUrl) : <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>
+                                                            ) : (
+                                                                <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -260,6 +338,24 @@ export default function User() {
                                     )}
                                 </div>
 
+                                <div className="mt-4 flex gap-2">
+                                    <button
+                                        onClick={() => updateStatus(user._id, "verified")}
+                                        className="px-3 py-1 bg-green-500 text-white rounded"
+                                    >
+                                        Verify
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            const reason = prompt("Reason for rejection:");
+                                            if (!reason) return;
+                                            updateStatus(user._id, "rejected", reason);
+                                        }}
+                                        className="px-3 py-1 bg-red-500 text-white rounded"
+                                    >
+                                        Reject
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -236,22 +236,29 @@ exports.completeSignUp = async (req, res, next) => {
         }
         const familyMembers = await FamilyMember.find({ userId });
         for (const member of familyMembers) {
-            let existing = await UserAccount.findOne({ "basicInfo.email": member.email });
-            if (!existing) {
-                await UserAccount.create({
-                    accountTypeId: user.accountTypeId,
-                    basicInfo: {
-                        fullName: member.fullName,
-                        mobileNumber: member.mobile,
-                        email: member.email,
-                        gender: member.gender,
-                        password: member.password
-                    },
-                    isVerfied: true,
-                    termsVerfied: true,
-                    status: "completed"
-                });
+            const existing = await UserAccount.findOne({ "basicInfo.email": member.email });
+            if (existing) continue;
+            const newFamilyUser = await UserAccount.create({
+                accountTypeId: user.accountTypeId,
+                basicInfo: {
+                    fullName: member.fullName,
+                    mobileNumber: member.mobile,
+                    email: member.email,
+                    gender: member.gender,
+                    password: member.password
+                },
+                isVerfied: true,
+                termsVerfied: true,
+                status: "completed",
+                singnUpCompleted: true,
+                isFamilyMember: true,
+                familyOwnerId: user._id,
+                familyMemberRef: member._id
+            });
+            if (member.addressId) {
+                await Address.findByIdAndUpdate(member.addressId, { userId: newFamilyUser._id }, { new: true });
             }
+            await FamilyMember.findByIdAndUpdate(member._id, { linkedUserId: newFamilyUser._id }, { new: true });
         }
         user.status = "completed";
         user.singnUpCompleted = true;
