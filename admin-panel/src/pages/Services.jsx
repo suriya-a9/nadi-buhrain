@@ -137,35 +137,44 @@ export default function Services() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
 
-                    <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="Service Name"
-                        required
-                        className="border p-2 rounded w-full"
-                    />
+                    <div className="flex flex-col gap-1">
+                        <label className="block mb-1 font-medium">Service Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            placeholder="Enter Service Name"
+                            required
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
 
-                    <input
-                        type="file"
-                        name="serviceImage"
-                        onChange={handleChange}
-                        className="border p-2 rounded w-full"
-                    />
+                    <div className="flex flex-col gap-1">
+                        <label className="block mb-1 font-medium">Service Image</label>
+                        <input
+                            type="file"
+                            name="serviceImage"
+                            onChange={handleChange}
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
 
-                    <input
-                        type="file"
-                        name="serviceLogo"
-                        onChange={handleChange}
-                        className="border p-2 rounded w-full"
-                    />
+                    <div className="flex flex-col gap-1">
+                        <label className="block mb-1 font-medium">Service Logo</label>
+                        <input
+                            type="file"
+                            name="serviceLogo"
+                            onChange={handleChange}
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
 
                     <button
                         type="submit"
                         className="bg-brandGreen w-full text-white py-2 rounded"
                     >
-                        {form.id ? "Update" : "Create"}
+                        {form.id ? "Update Service" : "Create Service"}
                     </button>
                 </form>
             </Offcanvas>

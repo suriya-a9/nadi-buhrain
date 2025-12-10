@@ -17,7 +17,7 @@ export default function Offcanvas({ open, onClose, title, children }) {
                     <button onClick={onClose} className="text-gray-600 text-2xl">×</button>
                 </div>
 
-                <div className="p-5">{children}</div>
+                <div className="p-5 overflow-y-auto h-[calc(100vh-70px)]">{children}</div>
             </div>
         </>
     );

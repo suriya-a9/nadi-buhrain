@@ -1,6 +1,11 @@
 function getValue(obj, key) {
-    return key.split('.').reduce((acc, part) => acc && acc[part], obj);
+    if (!key) return "";
+    if (!obj) return "";
+    return key.split(".").reduce((acc, part) => {
+        return acc && acc[part] !== undefined ? acc[part] : "";
+    }, obj);
 }
+
 
 export default function Table({ columns = [], data = [], actions }) {
     return (

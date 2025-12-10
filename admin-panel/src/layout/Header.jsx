@@ -56,7 +56,7 @@ export default function Header({ toggleSidebar }) {
             <div className="relative flex items-center">
                 <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="relative p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="relative p-2 rounded hover:bg-gray-100"
                 >
                     <span className="material-icons"><IoIosNotifications size={25} /></span>
                     {notifications.filter(n => !n.read).length > 0 && (
@@ -66,7 +66,7 @@ export default function Header({ toggleSidebar }) {
                     )}
                 </button>
                 {showDropdown && (
-                    <div className="absolute right-0 top-[35px] mt-2 w-80 bg-white dark:bg-gray-900 rounded shadow-md py-2 z-50">
+                    <div className="absolute right-0 top-[35px] mt-2 w-80 bg-white rounded shadow-md py-2 z-50">
                         <div className="flex justify-between items-center px-4 py-2">
                             <h3 className="font-semibold">Notifications</h3>
                             <button
@@ -107,7 +107,7 @@ export default function Header({ toggleSidebar }) {
                 </button>
 
                 {openMenu && (
-                    <div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-md py-2">
+                    <div className="absolute right-0 top-[35px] mt-2 w-40 bg-white rounded shadow-md py-2">
                         <button
                             onClick={() => {
                                 logout();
