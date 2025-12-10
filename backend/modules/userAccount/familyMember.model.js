@@ -5,50 +5,23 @@ const familyMemberSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserAccount"
     },
-    fullName: {
-        type: String
-    },
+    fullName: String,
     relation: {
         type: String,
         enum: ["wife", "daughter", "son"]
     },
-    addressType: {
-        type: String
-    },
-    floor: {
-        type: String
-    },
-    mobile: {
-        type: Number
-    },
-    email: {
-        type: String
-    },
+    mobile: Number,
+    email: String,
+    password: String,
     gender: {
         type: String,
         enum: ["male", "female", "others"]
     },
-    city: {
-        type: String,
-        required: true
-    },
-    building: {
-        type: String,
-        required: true,
-    },
-    aptNo: {
-        type: Number,
-        required: true
-    },
-    roadId: {
+    addressId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Road"
-    },
-    blockId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Block"
+        ref: "Address"
     }
-})
+});
 
-const FamilyMemeber = mongoose.model("FamilyMember", familyMemberSchema);
-module.exports = FamilyMemeber;
+const FamilyMember = mongoose.model("FamilyMember", familyMemberSchema);
+module.exports = FamilyMember;

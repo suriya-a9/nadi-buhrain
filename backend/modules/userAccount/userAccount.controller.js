@@ -6,7 +6,7 @@ const Address = require('../address/address.model');
 const config = require('../../config/default');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Notification =require('../adminPanel/notification/notification.model');
+const Notification = require('../adminPanel/notification/notification.model');
 
 exports.startSignUp = async (req, res, next) => {
     const { accountTypeId } = req.body;
@@ -143,6 +143,7 @@ exports.addFamilyMember = async (req, res, next) => {
     const {
         userId,
         familyCount,
+        password,
         fullName,
         relation,
         mobile,
@@ -151,20 +152,25 @@ exports.addFamilyMember = async (req, res, next) => {
         address
     } = req.body;
     try {
-        if (!req.body.userId) {
-            res.status(400).json({
-                message: "user id needed"
-            })
+        if (!userId) {
+            return res.status(400).json({ message: "user id needed" });
         }
+        const addressDoc = await Address.create({
+            ...address
+        });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
         const member = await FamilyMember.create({
             userId,
             fullName,
             relation,
             mobile,
             email,
+            password: hashedPassword,
             gender,
-            ...address
+            addressId: addressDoc._id
         });
+
         const user = await UserAccount.findById(userId);
         if (familyCount) {
             user.familyCount = familyCount;
@@ -176,11 +182,11 @@ exports.addFamilyMember = async (req, res, next) => {
             message: 'Family member added',
             allMemebersAdded: isComplete,
             data: member
-        })
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 
 exports.termsAndConditionVerify = async (req, res, next) => {
     const { userId } = req.body;
@@ -227,6 +233,25 @@ exports.completeSignUp = async (req, res, next) => {
         }
         if (!user.termsVerfied) {
             return res.status(400).json({ message: "need to accept terms and condition" });
+        }
+        const familyMembers = await FamilyMember.find({ userId });
+        for (const member of familyMembers) {
+            let existing = await UserAccount.findOne({ "basicInfo.email": member.email });
+            if (!existing) {
+                await UserAccount.create({
+                    accountTypeId: user.accountTypeId,
+                    basicInfo: {
+                        fullName: member.fullName,
+                        mobileNumber: member.mobile,
+                        email: member.email,
+                        gender: member.gender,
+                        password: member.password
+                    },
+                    isVerfied: true,
+                    termsVerfied: true,
+                    status: "completed"
+                });
+            }
         }
         user.status = "completed";
         user.singnUpCompleted = true;
