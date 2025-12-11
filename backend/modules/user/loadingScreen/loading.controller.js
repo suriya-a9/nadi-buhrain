@@ -23,9 +23,13 @@ exports.uploadLoadingScreen = async (req, res, next) => {
 exports.loadingScreen = async (req, res, next) => {
   try {
     const loadingData = await Loading.find();
-    const loadingScreenImage = loadingData[0].image;
+
+    if (!loadingData.length) {
+      return res.status(200).json({ data: null });
+    }
+
     res.status(200).json({
-      data: loadingScreenImage,
+      data: loadingData[0]
     });
   } catch (err) {
     next(err);

@@ -29,9 +29,8 @@ exports.getIntro = async (req, res, next) => {
         }
 
         res.status(200).json({
-            content: intro.content
+            data: intro
         });
-
     } catch (err) {
         next(err);
     }

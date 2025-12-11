@@ -38,7 +38,7 @@ export default function User() {
     }, []);
 
     const renderIdProofs = (files = []) => {
-        if (!files || !files.length) return <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>;
+        if (!files || !files.length) return <div className="text-gray-700">No ID proofs</div>;
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {files.map((f, i) => {
@@ -46,9 +46,9 @@ export default function User() {
                     const ext = f.split('.').pop().toLowerCase();
                     const isImage = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext);
                     return (
-                        <div key={i} className="p-2 border rounded bg-gray-50 dark:bg-gray-700" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <div key={i} className="p-2 border rounded bg-gray-50" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                             {isImage && <div className="mt-2"><img src={url} alt={f} className="max-h-40 w-auto rounded" /></div>}
-                            <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all">
+                            <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 underline break-all">
                                 view
                             </a>
                         </div>
@@ -105,18 +105,18 @@ export default function User() {
                     <div className="fixed inset-0 z-50 overflow-auto">
                         <div className="min-h-screen flex items-start justify-center py-8 px-4">
                             <div className="absolute inset-0 bg-black opacity-40" onClick={() => setDetailsOpen(false)} />
-                            <div className="relative bg-white text-black dark:text-white p-6 rounded shadow-lg max-w-4xl w-full z-10 max-h-[90vh] overflow-auto">
+                            <div className="relative bg-white text-black p-6 rounded shadow-lg max-w-4xl w-full z-10 max-h-[90vh] overflow-auto">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="text-lg font-semibold">User Details</h3>
                                     <button onClick={() => setDetailsOpen(false)} className="text-sm text-gray-500">Close</button>
                                 </div>
 
                                 {user.isFamilyMember && (
-                                    <div className="mb-4 p-3 border rounded bg-gray-50 dark:bg-gray-700">
+                                    <div className="mb-4 p-3 border rounded bg-gray-50">
                                         <div className="text-xs text-gray-500">Belongs to</div>
                                         <div className="text-sm font-medium">{owner ? owner.basicInfo?.fullName : `Owner ID: ${ownerId}`}</div>
-                                        <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.email : null}</div>
-                                        <div className="text-sm text-gray-600 dark:text-gray-300">{owner ? owner.basicInfo?.mobileNumber : null}</div>
+                                        <div className="text-sm text-gray-600">{owner ? owner.basicInfo?.email : null}</div>
+                                        <div className="text-sm text-gray-600">{owner ? owner.basicInfo?.mobileNumber : null}</div>
 
                                         {owner && owner.idProofUrl && owner.idProofUrl.length > 0 && (
                                             <div className="mt-3">
@@ -129,7 +129,7 @@ export default function User() {
                                                         return (
                                                             <div key={i} className="p-2 border rounded bg-white" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                                                 {isImage && <img src={url} alt={f} className="mt-2 max-h-28 rounded" />}
-                                                                <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 underline break-all text-sm">view</a>
+                                                                <a href={url} target="_blank" rel="noreferrer" className="text-blue-600 underline break-all text-sm">view</a>
                                                             </div>
                                                         );
                                                     })}
@@ -142,42 +142,42 @@ export default function User() {
                                 <div className="grid grid-cols-2 gap-3 text-sm mb-4">
                                     <div>
                                         <div className="font-medium">ID</div>
-                                        <div className="text-gray-700 dark:text-gray-300 break-all">{user._id}</div>
+                                        <div className="text-gray-700 break-all">{user._id}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Account Type</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.accountTypeId?.name || "—"}</div>
+                                        <div className="text-gray-700">{user.accountTypeId?.name || "—"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Full Name</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.basicInfo?.fullName || "—"}</div>
+                                        <div className="text-gray-700">{user.basicInfo?.fullName || "—"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Email</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.basicInfo?.email || "—"}</div>
+                                        <div className="text-gray-700">{user.basicInfo?.email || "—"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Mobile</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.basicInfo?.mobileNumber || "—"}</div>
+                                        <div className="text-gray-700">{user.basicInfo?.mobileNumber || "—"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Gender</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.basicInfo?.gender || "—"}</div>
+                                        <div className="text-gray-700">{user.basicInfo?.gender || "—"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Signup Completed</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.singnUpCompleted ? "Yes" : "No"}</div>
+                                        <div className="text-gray-700">{user.singnUpCompleted ? "Yes" : "No"}</div>
                                     </div>
 
                                     <div>
                                         <div className="font-medium">Verification</div>
-                                        <div className="text-gray-700 dark:text-gray-300">{user.accountVerification || "—"}</div>
+                                        <div className="text-gray-700">{user.accountVerification || "—"}</div>
                                     </div>
                                 </div>
 
@@ -189,13 +189,13 @@ export default function User() {
                                                 const roadName = a.roadId && typeof a.roadId === "object" ? a.roadId.name : a.roadId;
                                                 const blockName = a.blockId && typeof a.blockId === "object" ? a.blockId.name : a.blockId;
                                                 return (
-                                                    <div key={a._id} className="p-3 border rounded text-sm bg-gray-50 dark:bg-gray-700">
-                                                        <div className="text-gray-700 dark:text-gray-300">Road: {roadName || '—'}</div>
-                                                        <div className="text-gray-700 dark:text-gray-300">Block: {blockName || '—'}</div>
-                                                        <div className="text-gray-700 dark:text-gray-300">City: {a.city || '—'}</div>
-                                                        <div className="text-gray-700 dark:text-gray-300">Building: {a.building || '—'}</div>
-                                                        <div className="text-gray-700 dark:text-gray-300">Floor: {a.floor || '—'}</div>
-                                                        <div className="text-gray-700 dark:text-gray-300">Apt No: {a.aptNo ?? '—'}</div>
+                                                    <div key={a._id} className="p-3 border rounded text-sm bg-gray-50">
+                                                        <div className="text-gray-700">Road: {roadName || '—'}</div>
+                                                        <div className="text-gray-700">Block: {blockName || '—'}</div>
+                                                        <div className="text-gray-700">City: {a.city || '—'}</div>
+                                                        <div className="text-gray-700">Building: {a.building || '—'}</div>
+                                                        <div className="text-gray-700">Floor: {a.floor || '—'}</div>
+                                                        <div className="text-gray-700">Apt No: {a.aptNo ?? '—'}</div>
                                                     </div>
                                                 );
                                             })}
@@ -211,47 +211,47 @@ export default function User() {
                                 <div className="mb-4">
                                     <div className="font-medium mb-2">Family Members</div>
                                     {familyMembers.length === 0 ? (
-                                        <div className="text-gray-700 dark:text-gray-300 text-sm">No family members</div>
+                                        <div className="text-gray-700 text-sm">No family members</div>
                                     ) : (
                                         <div className="space-y-2">
                                             {familyMembers.map((fm) => (
-                                                <div key={fm._id} className="p-3 border rounded bg-gray-50 dark:bg-gray-700">
+                                                <div key={fm._id} className="p-3 border rounded bg-gray-50">
                                                     <div className="grid grid-cols-2 gap-2 text-sm">
                                                         <div>
                                                             <div className="text-xs text-gray-500">Name</div>
-                                                            <div className="text-gray-800 dark:text-gray-200">{fm.fullName}</div>
+                                                            <div className="text-gray-800">{fm.fullName}</div>
                                                         </div>
                                                         <div>
                                                             <div className="text-xs text-gray-500">Relation</div>
-                                                            <div className="text-gray-800 dark:text-gray-200">{fm.relation}</div>
+                                                            <div className="text-gray-800">{fm.relation}</div>
                                                         </div>
 
                                                         <div>
                                                             <div className="text-xs text-gray-500">Email</div>
-                                                            <div className="text-gray-800 dark:text-gray-200">{fm.email}</div>
+                                                            <div className="text-gray-800">{fm.email}</div>
                                                         </div>
                                                         <div>
                                                             <div className="text-xs text-gray-500">Mobile</div>
-                                                            <div className="text-gray-800 dark:text-gray-200">{fm.mobile}</div>
+                                                            <div className="text-gray-800">{fm.mobile}</div>
                                                         </div>
 
                                                         <div className="col-span-2">
                                                             <div className="text-xs text-gray-500">Address</div>
                                                             {fm.address ? (
-                                                                <div className="text-gray-800 dark:text-gray-200 text-sm">
+                                                                <div className="text-gray-800 text-sm">
                                                                     {fm.address.city ? `${fm.address.city}, ` : ''}
                                                                     {fm.address.building ? `${fm.address.building}, ` : ''}
                                                                     {fm.address.street ? `${fm.address.street}, ` : ''}
                                                                     Apt: {fm.address.aptNo ?? '—'} Floor: {fm.address.floor ?? '—'}
                                                                 </div>
                                                             ) : (
-                                                                <div className="text-gray-700 dark:text-gray-300">No address</div>
+                                                                <div className="text-gray-700">No address</div>
                                                             )}
                                                         </div>
 
                                                         <div className="col-span-2 mt-2">
                                                             <div className="text-xs text-gray-500">Family Member ID Proofs</div>
-                                                            {fm.idProofUrl ? renderIdProofs(fm.idProofUrl) : <div className="text-gray-700 dark:text-gray-300">No ID proofs</div>}
+                                                            {fm.idProofUrl ? renderIdProofs(fm.idProofUrl) : <div className="text-gray-700">No ID proofs</div>}
                                                         </div>
                                                     </div>
                                                 </div>

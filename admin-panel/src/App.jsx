@@ -11,6 +11,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import User from "./pages/User";
 import Technicians from "./pages/Technicians";
 import NotVerifiedUser from "./pages/NotVerifiedUser";
+import Intro from "./pages/Intro";
+import LoadingScreen from "./pages/LoadingScreen";
 
 export default function App() {
   return (
@@ -81,6 +83,26 @@ export default function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <NotVerifiedUser />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/splash-screen"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Intro />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/about-screen"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <LoadingScreen />
                 </DashboardLayout>
               </PrivateRoute>
             }

@@ -8,6 +8,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             : "text-gray-700 hover:bg-gray-200"
         }`;
 
+    const sectionTitle = "text-xs font-semibold text-gray-500 uppercase px-3 mt-6 mb-2";
+
     return (
         <>
             {isOpen && (
@@ -16,6 +18,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     className="fixed inset-0 bg-black/50 z-30 lg:hidden"
                 />
             )}
+
             <aside
                 className={`
                     fixed left-0 top-0 h-full bg-white shadow-lg z-40 w-64 
@@ -27,23 +30,36 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <h2 className="text-2xl font-bold text-textGreen">Nadi Buhrain</h2>
                 </div>
 
-                <nav className="p-4 space-y-2">
+                <nav className="p-4">
 
+                    <div className={sectionTitle}>General</div>
                     <NavLink to="/" className={linkClasses}>
                         Dashboard
                     </NavLink>
+                    <NavLink to="/splash-screen" className={linkClasses}>
+                        Splash screen
+                    </NavLink>
+                    <NavLink to="/about-screen" className={linkClasses}>
+                        About screen
+                    </NavLink>
 
+                    <div className={sectionTitle}>Services</div>
                     <NavLink to="/services" className={linkClasses}>
-                        Services
+                        Service List
                     </NavLink>
+
+                    <div className={sectionTitle}>Users</div>
                     <NavLink to="/users" className={linkClasses}>
-                        Users
+                        Verified Users
                     </NavLink>
-                    <NavLink to="/technicians" className={linkClasses}>
-                        Technicians
-                    </NavLink>
+
                     <NavLink to="/not-verified" className={linkClasses}>
-                        Not veirified user
+                        Not Verified Users
+                    </NavLink>
+
+                    <div className={sectionTitle}>Technicians</div>
+                    <NavLink to="/technicians" className={linkClasses}>
+                        Technicians List
                     </NavLink>
                 </nav>
             </aside>
