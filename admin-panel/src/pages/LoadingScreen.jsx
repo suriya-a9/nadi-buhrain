@@ -77,40 +77,41 @@ export default function LoadingScreen() {
                 </button> */}
             </div>
 
-            <Table
-                columns={[
-                    {
-                        title: "Image",
-                        key: "image",
-                        render: (value) =>
-                            value ? (
-                                <img
-                                    src={`http://localhost:8080/uploads/${value}`}
-                                    className="h-12 rounded border"
-                                />
-                            ) : (
-                                "-"
-                            ),
-                    },
-                ]}
-                data={screens}
-                actions={(row) => (
-                    <div className="flex gap-2">
+            {screens.length === 0 ? (
+                <div className="text-center text-gray-500 py-10">
+                    <p className="text-lg">No loading screen uploaded yet.</p>
+                    <button
+                        className="mt-4 bg-brandGreen hover:bg-green-700 text-white px-4 py-2 rounded shadow-md transition-all"
+                        onClick={() => setForm({ id: "", image: null }) || setOpen(true)}
+                    >
+                        ➕ Upload Loading Screen
+                    </button>
+                </div>
+            ) : (
+                <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="bg-gray-100 p-4 flex justify-center">
+                        <img
+                            src={`http://localhost:8080/uploads/${screens[0].image}`}
+                            alt="Loading Screen"
+                            className="h-48 object-contain rounded border"
+                        />
+                    </div>
+                    <div className="p-4 flex justify-end gap-2">
                         <button
-                            className="bg-yellow-500 text-white px-3 py-1 rounded"
-                            onClick={() => editScreen(row)}
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition"
+                            onClick={() => editScreen(screens[0])}
                         >
                             Replace
                         </button>
                         <button
-                            className="bg-red-600 text-white px-3 py-1 rounded"
-                            onClick={() => deleteScreen(row)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+                            onClick={() => deleteScreen(screens[0])}
                         >
                             Delete
                         </button>
                     </div>
-                )}
-            />
+                </div>
+            )}
 
             <Offcanvas
                 open={open}

@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             <aside
                 className={`
                     fixed left-0 top-0 h-full bg-white shadow-lg z-40 w-64 
-                    transform transition-transform duration-300 overflow-scroll
+                    transform transition-transform duration-300 overflow-y-scroll
                     ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
                 `}
             >

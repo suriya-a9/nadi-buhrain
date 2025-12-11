@@ -99,39 +99,35 @@ export default function Intro() {
                 </button> */}
             </div>
 
-            <Table
-                columns={[
-                    {
-                        title: "Content",
-                        key: "content",
-                        render: (value) => (
-                            <ul className="list-disc pl-4">
-                                {value.map((v, i) => (
-                                    <li key={i}>{v}</li>
-                                ))}
-                            </ul>
-                        ),
-                    }
-                ]}
-                data={introList}
-                actions={(row) => (
-                    <div>
-                        <button
-                            className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                            onClick={() => editIntro(row)}
-                        >
-                            Edit
-                        </button>
-
-                        <button
-                            className="bg-red-600 text-white px-3 py-1 rounded"
-                            onClick={() => deleteIntro(row._id)}
-                        >
-                            Delete
-                        </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {introList.map((intro) => (
+                    <div
+                        key={intro._id}
+                        className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow"
+                    >
+                        <h3 className="text-lg font-bold mb-2">Intro</h3>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                            {intro.content.map((v, i) => (
+                                <li key={i}>{v}</li>
+                            ))}
+                        </ul>
+                        <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                                onClick={() => editIntro(intro)}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                                onClick={() => deleteIntro(intro._id)}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                )}
-            />
+                ))}
+            </div>
 
             <Offcanvas
                 open={open}
