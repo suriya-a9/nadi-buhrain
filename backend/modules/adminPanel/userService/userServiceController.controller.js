@@ -1,10 +1,12 @@
 const UserService = require('../../user/userService/userService.model');
 const TechnicianUserService = require('./technicianUserService.model');
 const formatDate = require('../../../utils/formatDate');
+const logger = require('../../../logger');
 
 exports.newUserServiceRequest = async (req, res, next) => {
     try {
         const newServiceList = await UserService.find({ serviceStatus: "submitted" })
+            .populate("userId")
             .populate('serviceId')
             .populate('issuesId');
         const formattedList = newServiceList.map(service => {
@@ -29,14 +31,15 @@ exports.newUserServiceRequest = async (req, res, next) => {
 }
 
 exports.updateServiceStatus = async (req, res, next) => {
-    const { id, serviceStatus } = req.body;
+    const { id, serviceStatus, reason } = req.body;
     try {
         const validStatuses = [
             "submitted",
             "accepted",
             "technicianAssigned",
             "inProgress",
-            "completed"
+            "completed",
+            "rejected"
         ];
         if (!validStatuses.includes(serviceStatus)) {
             return res.status(400).json({ message: "Invalid status" });
@@ -46,6 +49,13 @@ exports.updateServiceStatus = async (req, res, next) => {
             serviceStatus,
             [`statusTimestamps.${serviceStatus}`]: new Date()
         };
+
+        if (serviceStatus === "rejected") {
+            if (!reason) {
+                return res.status(400).json({ message: "Reason required for rejection" });
+            }
+            update.reason = reason;
+        }
 
         const updated = await UserService.findByIdAndUpdate(
             id,
@@ -57,6 +67,7 @@ exports.updateServiceStatus = async (req, res, next) => {
             data: updated
         });
     } catch (err) {
+        console.log("Service error", err)
         next(err);
     }
 };

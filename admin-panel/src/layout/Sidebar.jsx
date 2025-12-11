@@ -43,6 +43,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                         About screen
                     </NavLink>
 
+                    <div className={sectionTitle}>Requests</div>
+                    <NavLink to="/new-requests" className={linkClasses}>
+                        New Requests
+                    </NavLink>
+
                     <div className={sectionTitle}>Services</div>
                     <NavLink to="/services" className={linkClasses}>
                         Service List

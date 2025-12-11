@@ -4,7 +4,7 @@ const FamilyMember = require('../../userAccount/familyMember.model');
 const Address = require('../../address/address.model');
 
 exports.verifyAccount = async (req, res, next) => {
-    const { userId, status } = req.body;
+    const { userId, status, reason } = req.body;
     try {
         if (!userId || !status) {
             return res.status(400).json({ message: "userId and status required" });
@@ -27,6 +27,13 @@ exports.verifyAccount = async (req, res, next) => {
             }
         }
 
+        if (status === "rejected") {
+            if (!reason) {
+                return res.status(400).json({ message: "Reason required for rejection" });
+            }
+            updateFields.reason = reason;
+        }
+
         const result = await UserAccount.findByIdAndUpdate(
             userId,
             updateFields,
@@ -40,7 +47,12 @@ exports.verifyAccount = async (req, res, next) => {
 
 exports.verificaionAccountList = async (req, res, next) => {
     try {
-        const users = await UserAccount.find({ accountVerification: "not verified" })
+        const users = await UserAccount.find({
+            $or: [
+                { accountVerification: "not verified" },
+                { accountVerification: "rejected" }
+            ]
+        })
             .populate('accountTypeId')
             .lean();
 

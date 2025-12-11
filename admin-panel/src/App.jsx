@@ -13,6 +13,7 @@ import Technicians from "./pages/Technicians";
 import NotVerifiedUser from "./pages/NotVerifiedUser";
 import Intro from "./pages/Intro";
 import LoadingScreen from "./pages/LoadingScreen";
+import ServiceRequest from "./pages/ServiceRequest";
 
 export default function App() {
   return (
@@ -103,6 +104,16 @@ export default function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <LoadingScreen />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/new-requests"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <ServiceRequest />
                 </DashboardLayout>
               </PrivateRoute>
             }

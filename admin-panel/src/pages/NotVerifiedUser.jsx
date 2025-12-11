@@ -7,6 +7,8 @@ export default function NotVerifiedUser() {
     const [loading, setLoading] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [detailsOpen, setDetailsOpen] = useState(false);
+    const [rejecting, setRejecting] = useState(false);
+    const [reason, setReason] = useState("");
 
     const loadUsers = async () => {
         setLoading(true);
@@ -90,7 +92,8 @@ export default function NotVerifiedUser() {
                     { title: "Mobile", key: "basicInfo.mobileNumber" },
                     { title: "Email", key: "basicInfo.email" },
                     { title: "Account Type", key: "accountTypeId.name" },
-                    { title: "Status", key: "accountVerification" }
+                    { title: "Status", key: "accountVerification" },
+                    { title: "Rejection Reason", key: "reason" },
                 ]}
                 data={users}
                 actions={(row) => (
@@ -109,9 +112,9 @@ export default function NotVerifiedUser() {
                         </button>
                         <button
                             onClick={() => {
-                                const reason = prompt("Please enter rejection reason:");
-                                if (!reason) return alert("Rejection reason is required");
-                                updateStatus(row._id, "rejected", reason);
+                                setSelectedUser({ user: row, type: 'user' });
+                                setDetailsOpen(true);
+                                setRejecting(true);
                             }}
                             className="px-2 py-1 bg-red-500 text-white rounded text-sm"
                         >
@@ -342,20 +345,61 @@ export default function NotVerifiedUser() {
                                     <button
                                         onClick={() => updateStatus(user._id, "verified")}
                                         className="px-3 py-1 bg-green-500 text-white rounded"
+                                        disabled={rejecting}
                                     >
                                         Verify
                                     </button>
                                     <button
-                                        onClick={() => {
-                                            const reason = prompt("Reason for rejection:");
-                                            if (!reason) return;
-                                            updateStatus(user._id, "rejected", reason);
-                                        }}
-                                        className="px-3 py-1 bg-red-500 text-white rounded"
+                                        disabled={rejecting || user.accountVerification === "rejected"}
+                                        className={`px-3 py-1 rounded ${user.accountVerification === "rejected"
+                                            ? "bg-gray-400 text-white"
+                                            : "bg-red-500 text-white"
+                                            }`}
+                                        onClick={() => setRejecting(true)}
                                     >
                                         Reject
                                     </button>
                                 </div>
+                                {rejecting && (
+                                    <div className="mt-3">
+                                        <label className="block text-sm font-medium mb-1">Rejection Reason</label>
+                                        <input
+                                            type="text"
+                                            value={reason}
+                                            onChange={e => setReason(e.target.value)}
+                                            className="border rounded px-2 py-1 w-full mb-2"
+                                            placeholder="Enter reason"
+                                        />
+                                        <div className="flex gap-2">
+                                            <button
+                                                className="px-3 py-1 bg-red-500 text-white rounded"
+                                                disabled={!reason}
+                                                onClick={async () => {
+                                                    await updateStatus(user._id, "rejected", reason);
+                                                    setRejecting(false);
+                                                    setReason("");
+                                                }}
+                                            >
+                                                Confirm Reject
+                                            </button>
+                                            <button
+                                                className="px-3 py-1 bg-gray-300 text-black rounded"
+                                                onClick={() => {
+                                                    setRejecting(false);
+                                                    setReason("");
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                {user.accountVerification === "rejected" && user.reason && (
+                                    <div className="mt-2">
+                                        <div className="font-medium">Rejection Reason</div>
+                                        <div className="text-red-600">{user.reason}</div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

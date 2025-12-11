@@ -46,9 +46,14 @@ const userServiceSchema = new mongoose.Schema({
             "accepted",
             "technicianAssigned",
             "inProgress",
-            "completed"
+            "completed",
+            "rejected"
         ],
         default: "submitted"
+    },
+    reason: {
+        type: String,
+        default: null
     },
     technicianAccepted: {
         type: Boolean,

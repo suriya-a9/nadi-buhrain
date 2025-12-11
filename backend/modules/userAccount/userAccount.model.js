@@ -64,6 +64,10 @@ const userAccountSchema = new mongoose.Schema({
         enum: ["draft", "pending_otp", "completed"],
         default: "draft"
     },
+    reason: {
+        type: String,
+        default: null
+    },
     isFamilyMember: {
         type: Boolean,
         default: false
