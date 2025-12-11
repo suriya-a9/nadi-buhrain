@@ -145,3 +145,32 @@ exports.technicianRespond = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.acceptedServiceRequests = async (req, res, next) => {
+    try {
+        const newServiceList = await UserService.find({
+            serviceStatus: { $nin: ["submitted", "rejected"] }
+        })
+            .populate("userId")
+            .populate('serviceId')
+            .populate('issuesId');
+        const formattedList = newServiceList.map(service => {
+            const formattedTimestamps = {};
+            Object.entries(service.statusTimestamps).forEach(([key, value]) => {
+                formattedTimestamps[key] = formatDate(value, true);
+            });
+            return {
+                ...service.toObject(),
+                statusTimestamps: formattedTimestamps,
+                scheduleService: formatDate(service.scheduleService, true),
+                createdAt: formatDate(service.createdAt, true),
+                updatedAt: formatDate(service.updatedAt, true)
+            };
+        });
+        res.status(200).json({
+            data: formattedList
+        })
+    } catch (err) {
+        next(err);
+    }
+}

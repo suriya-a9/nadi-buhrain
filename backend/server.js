@@ -29,6 +29,7 @@ const technicalSkillSetRouter = require("./modules/adminPanel/technicianSkillSet
 const technicianRouter = require("./modules/adminPanel/technician/technician.routes");
 const technicianPanelRouter = require("./modules/technician/technician.routes");
 const notificationRouter = require("./modules/adminPanel/notification/notification.routes");
+const dashboardRouter = require('./modules/adminPanel/dashboard/dashboard.routes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -65,6 +66,7 @@ app.use("/api/technical", technicalSkillSetRouter);
 app.use("/api/technician", technicianRouter);
 app.use("/api/techie", technicianPanelRouter);
 app.use("/api/notifications", notificationRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

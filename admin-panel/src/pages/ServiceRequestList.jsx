@@ -2,21 +2,17 @@ import { useEffect, useState } from "react";
 import Table from "../components/Table";
 import api from "../services/api";
 
-export default function ServiceRequest() {
+export default function ServiceRequestList() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(null);
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
-    const [rejecting, setRejecting] = useState(false);
-    const [reason, setReason] = useState("");
-
     const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
-
     const loadRequests = async () => {
         setLoading(true);
         try {
-            const res = await api.get('/user-service-list/');
+            const res = await api.get('/user-service-list/accpeted-requests');
             setRequests(res.data.data || []);
         } catch (err) {
             console.error(err);
@@ -24,12 +20,9 @@ export default function ServiceRequest() {
             setLoading(false);
         }
     }
-
     useEffect(() => {
         loadRequests();
     }, []);
-
-
     const handleView = (row) => {
         setSelected(row);
         setDetailsOpen(true);
@@ -82,17 +75,10 @@ export default function ServiceRequest() {
         );
     };
 
-    const statusOptions = [
-        "submitted",
-        "accepted",
-        "technicianAssigned",
-        "inProgress",
-        "completed"
-    ];
     return (
         <div>
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold">New Service Requests</h2>
+                <h2 className="text-2xl font-semibold">Service Requests List</h2>
             </div>
             <Table
                 columns={[
@@ -120,7 +106,6 @@ export default function ServiceRequest() {
                 )}
             />
             {loading && <div className="text-sm text-gray-500 mt-2">Loading...</div>}
-
             {detailsOpen && selected && (
                 <div className="fixed inset-0 z-50 overflow-auto">
                     <div className="min-h-screen flex items-start justify-center py-8 px-4">
@@ -188,72 +173,6 @@ export default function ServiceRequest() {
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-
-                            <div className="mb-2">
-                                <div className="font-medium mb-2">Update Status</div>
-                                <div className="flex gap-2 flex-wrap">
-                                    <button
-                                        disabled={statusUpdating || selected.serviceStatus === "accepted"}
-                                        className={`px-3 py-1 rounded ${selected.serviceStatus === "accepted"
-                                            ? "bg-gray-400 text-white"
-                                            : "bg-brandGreen text-white"
-                                            }`}
-                                        onClick={() => handleStatusUpdate(selected._id, "accepted")}
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        disabled={statusUpdating || selected.serviceStatus === "rejected"}
-                                        className={`px-3 py-1 rounded ${selected.serviceStatus === "rejected"
-                                            ? "bg-gray-400 text-white"
-                                            : "bg-red-500 text-white"
-                                            }`}
-                                        onClick={() => setRejecting(true)}
-                                    >
-                                        Reject
-                                    </button>
-                                </div>
-                                {rejecting && (
-                                    <div className="mt-3">
-                                        <label className="block text-sm font-medium mb-1">Rejection Reason</label>
-                                        <input
-                                            type="text"
-                                            value={reason}
-                                            onChange={e => setReason(e.target.value)}
-                                            className="border rounded px-2 py-1 w-full mb-2"
-                                            placeholder="Enter reason"
-                                        />
-                                        <div className="flex gap-2">
-                                            <button
-                                                className="px-3 py-1 bg-red-500 text-white rounded"
-                                                disabled={statusUpdating || !reason}
-                                                onClick={async () => {
-                                                    await handleStatusUpdate(selected._id, "rejected", reason);
-                                                    setRejecting(false);
-                                                    setReason("");
-                                                }}
-                                            >
-                                                Confirm Reject
-                                            </button>
-                                            <button
-                                                className="px-3 py-1 bg-gray-300 text-black rounded"
-                                                onClick={() => {
-                                                    setRejecting(false);
-                                                    setReason("");
-                                                }}
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                                {selected.serviceStatus === "rejected" && selected.reason && (
-                                    <div className="mt-2">
-                                        <div className="font-medium">Rejection Reason</div>
-                                        <div className="text-red-600">{selected.reason}</div>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>

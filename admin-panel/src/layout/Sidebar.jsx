@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             <aside
                 className={`
                     fixed left-0 top-0 h-full bg-white shadow-lg z-40 w-64 
-                    transform transition-transform duration-300
+                    transform transition-transform duration-300 overflow-scroll
                     ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
                 `}
             >
@@ -44,6 +44,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     </NavLink>
 
                     <div className={sectionTitle}>Requests</div>
+                    <NavLink to="/service-requests" className={linkClasses}>
+                        Service Requests List
+                    </NavLink>
                     <NavLink to="/new-requests" className={linkClasses}>
                         New Requests
                     </NavLink>

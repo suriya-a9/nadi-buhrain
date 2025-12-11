@@ -14,6 +14,7 @@ import NotVerifiedUser from "./pages/NotVerifiedUser";
 import Intro from "./pages/Intro";
 import LoadingScreen from "./pages/LoadingScreen";
 import ServiceRequest from "./pages/ServiceRequest";
+import ServiceRequestList from "./pages/ServiceRequestList";
 
 export default function App() {
   return (
@@ -114,6 +115,16 @@ export default function App() {
               <PrivateRoute>
                 <DashboardLayout>
                   <ServiceRequest />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/service-requests"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <ServiceRequestList />
                 </DashboardLayout>
               </PrivateRoute>
             }
