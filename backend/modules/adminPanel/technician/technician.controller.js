@@ -53,7 +53,7 @@ exports.loginTechnician = async (req, res, next) => {
         const token = jwt.sign(
             { id: emailData._id, role: emailData.role },
             config.jwt,
-            { expiresIn: '1d' }
+            { expiresIn: '30d' }
         )
         res.status(200).json({
             message: "Logged in successfully",
