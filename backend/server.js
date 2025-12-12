@@ -30,6 +30,8 @@ const technicianRouter = require("./modules/adminPanel/technician/technician.rou
 const technicianPanelRouter = require("./modules/technician/technician.routes");
 const notificationRouter = require("./modules/adminPanel/notification/notification.routes");
 const dashboardRouter = require('./modules/adminPanel/dashboard/dashboard.routes');
+const inventoryRouter = require('./modules/adminPanel/inventory/inventory.routes');
+const materialRequestRouter = require('./modules/adminPanel/materialRequest/materialRequest.routes');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -67,6 +69,8 @@ app.use("/api/technician", technicianRouter);
 app.use("/api/techie", technicianPanelRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/inventory", inventoryRouter);
+app.use("/api/material", materialRequestRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -83,6 +87,6 @@ const io = new Server(server, {
 
 app.set('io', io);
 
-server.listen(config.port, () => {
-  logger.info(`Web socket server running on port ${config.port}`);
+server.listen(config.port, "0.0.0.0", () => {
+  logger.info(`Web socket server running on http://0.0.0.0:${config.port}`);
 });
