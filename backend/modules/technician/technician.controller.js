@@ -222,18 +222,26 @@ exports.updateServiceStatus = async (req, res, next) => {
         if (!userServiceId) {
             return res.status(400).json({ message: "userServiceId is required" });
         }
-
-        const techUserService = await TechnicianUserService.findOneAndUpdate(
-            { technicianId, userServiceId },
-            {
-                notes: notes || "",
-                $push: { media: { $each: mediaFiles } }
-            },
-            { new: true }
-        );
+        const techUserService = await TechnicianUserService.findOne({ technicianId, userServiceId });
         if (!techUserService) {
             return res.status(404).json({ message: "TechnicianUserService not found" });
         }
+        let updatedFields = {
+            notes: notes || "",
+            $push: { media: { $each: mediaFiles } }
+        };
+        if (techUserService.workStartedAt) {
+            const now = new Date();
+            const elapsed = Math.floor((now - techUserService.workStartedAt) / 1000);
+            updatedFields.workDuration = (techUserService.workDuration || 0) + elapsed;
+            updatedFields.workStartedAt = null;
+        }
+
+        const updatedTechUserService = await TechnicianUserService.findOneAndUpdate(
+            { technicianId, userServiceId },
+            updatedFields,
+            { new: true }
+        );
 
         // await UserService.findByIdAndUpdate(
         //     userServiceId,
@@ -242,7 +250,7 @@ exports.updateServiceStatus = async (req, res, next) => {
 
         res.status(200).json({
             message: "Service completed, notes and media saved",
-            techUserService
+            techUserService: updatedTechUserService
         });
     } catch (err) {
         next(err);
