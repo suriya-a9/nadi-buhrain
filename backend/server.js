@@ -11,6 +11,11 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 
+const cron = require('node-cron');
+const TechnicianUserService = require('./modules/adminPanel/userService/technicianUserService.model');
+const UserService = require('./modules/user/userService/userService.model');
+const Notification = require('./modules/adminPanel/notification/notification.model');
+
 const serviceRouter = require("./modules/service/service.routes");
 const adminRouter = require("./modules/admin/admin.routes");
 const loadingRouter = require("./modules/user/loadingScreen/loading.routes");
@@ -87,6 +92,31 @@ const io = new Server(server, {
 
 app.set('io', io);
 
-server.listen(config.port, "0.0.0.0", () => {
-  logger.info(`Web socket server running on http://0.0.0.0:${config.port}`);
+cron.schedule('*/5 * * * * *', async () => {
+  const now = new Date();
+  const inProgressTechServices = await TechnicianUserService.find({
+    status: "in-progress",
+    adminNotified: { $ne: true }
+  });
+
+  for (const techService of inProgressTechServices) {
+    let totalSeconds = techService.workDuration || 0;
+    if (techService.workStartedAt) {
+      totalSeconds += Math.floor((now - techService.workStartedAt) / 1000);
+    }
+    if (totalSeconds >= 7200) {
+      const userService = await UserService.findById(techService.userServiceId);
+      await Notification.create({
+        title: "Technician work exceeded 2 hours",
+        message: `Service request ${userService?.serviceRequestID || techService.userServiceId} has exceeded 2 hours.`,
+        type: "work_overdue"
+      });
+      techService.adminNotified = true;
+      await techService.save();
+    }
+  }
+});
+const PORT = config.port
+server.listen(PORT, "0.0.0.0", () => {
+  logger.info(`Server running on ${PORT} and 0.0.0.0`);
 });

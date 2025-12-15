@@ -87,6 +87,7 @@ export default function ServiceRequest() {
         "accepted",
         "technicianAssigned",
         "inProgress",
+        "paymentInProgress",
         "completed"
     ];
     return (

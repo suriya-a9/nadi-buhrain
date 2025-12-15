@@ -1,5 +1,6 @@
 const MaterialRequest = require('./materialRequest.model');
 const Inventory = require("../inventory/inventory.model");
+const SpareParts = require("../spareParts/spareParts.model");
 
 exports.singleRequest = async (req, res, next) => {
     const { productId, quantity, notes } = req.body;
@@ -99,5 +100,58 @@ exports.bulkRequest = async (req, res, next) => {
 };
 
 exports.responseMaterialRequest = async (req, res, next) => {
+    const { id, status } = req.body;
+    try {
+        const request = await MaterialRequest.findById(id);
+        if (!request) {
+            return res.status(404).json({ message: "Material request not found" });
+        }
 
-}
+        if (status === "processed") {
+            request.status = "processed";
+            await request.save();
+
+            const inventory = await Inventory.findById(request.productId);
+            if (!inventory) {
+                return res.status(404).json({ message: "Inventory product not found" });
+            }
+            const availableQty = parseInt(inventory.quantity, 10);
+            const reqQty = parseInt(request.quantity, 10);
+            if (availableQty < reqQty) {
+                return res.status(400).json({ message: "Not enough stock in inventory" });
+            }
+            inventory.quantity = (availableQty - reqQty).toString();
+            await inventory.save();
+
+            let spare = await SpareParts.findOne({
+                technicianId: request.technicianId,
+                productId: request.productId
+            });
+            if (spare) {
+                const currentCount = parseInt(spare.count, 10) || 0;
+                spare.count = (currentCount + reqQty).toString();
+                await spare.save();
+            } else {
+                await SpareParts.create({
+                    technicianId: request.technicianId,
+                    productId: request.productId,
+                    count: reqQty.toString()
+                });
+            }
+
+            return res.status(200).json({
+                message: "Request processed, inventory and spare parts updated",
+                data: request
+            });
+        } else {
+            request.status = status;
+            await request.save();
+            return res.status(200).json({
+                message: "Request status updated",
+                data: request
+            });
+        }
+    } catch (err) {
+        next(err);
+    }
+};

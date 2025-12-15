@@ -11,6 +11,9 @@ const inventorySchema = new mongoose.Schema({
     stock: {
         type: Boolean,
         default: true
+    },
+    price: {
+        type: Number
     }
 }, { timestamps: true });
 

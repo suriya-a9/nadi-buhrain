@@ -46,6 +46,7 @@ const userServiceSchema = new mongoose.Schema({
             "accepted",
             "technicianAssigned",
             "inProgress",
+            "paymentInProgress",
             "completed",
             "rejected"
         ],
@@ -64,6 +65,7 @@ const userServiceSchema = new mongoose.Schema({
         accepted: { type: Date, default: null },
         technicianAssigned: { type: Date, default: null },
         inProgress: { type: Date, default: null },
+        paymentInProgress: { type: Date, default: null },
         completed: { type: Date, default: null }
     },
 }, { timestamps: true });

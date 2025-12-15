@@ -38,6 +38,7 @@ exports.updateServiceStatus = async (req, res, next) => {
             "accepted",
             "technicianAssigned",
             "inProgress",
+            "paymentInProgress",
             "completed",
             "rejected"
         ];

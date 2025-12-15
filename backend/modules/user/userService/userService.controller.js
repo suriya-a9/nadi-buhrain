@@ -31,6 +31,7 @@ exports.createRequest = async (req, res, next) => {
                 processing: null,
                 technicianAssigned: null,
                 inProgress: null,
+                paymentInProgress: null,
                 completed: null
             }
         })

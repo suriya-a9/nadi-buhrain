@@ -1,11 +1,12 @@
 const Inventory = require('./inventory.model');
 
 exports.addInventory = async (req, res, next) => {
-    const { productName, quantity, stock } = req.body;
+    const { productName, quantity, stock, price } = req.body;
     try {
         await Inventory.create({
             productName,
             quantity,
+            price,
             stock: true
         });
         res.status(201).json({
