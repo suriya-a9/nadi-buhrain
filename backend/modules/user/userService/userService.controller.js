@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const UserService = require('./userService.model');
 const formatDate = require('../../../utils/formatDate');
 const UserAccount = require("../../userAccount/userAccount.model");
+const Notification = require('../../../modules/adminPanel/notification/notification.model');
 
 exports.createRequest = async (req, res, next) => {
     const { serviceId, issuesId, feedback, scheduleService, immediateAssistance, otherIssue } = req.body;
@@ -42,7 +43,16 @@ exports.createRequest = async (req, res, next) => {
                 paymentInProgress: null,
                 completed: null
             }
-        })
+        });
+        const notification = await Notification.create({
+            type: 'service_request',
+            message: `New service request submitted by ${user.basicInfo.fullName}`,
+            userId: user._id,
+            time: new Date(),
+            read: false
+        });
+        const io = req.app.get('io');
+        io.emit('notification', notification);
         res.status(201).json({
             message: "Service created successfully",
             data: requestCreate
