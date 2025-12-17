@@ -31,6 +31,15 @@ exports.startSignUp = async (req, res, next) => {
 exports.saveBasicInfo = async (req, res, next) => {
     const { userId, fullName, mobileNumber, email, gender, password } = req.body;
     try {
+        const existingUser = await UserAccount.findOne({
+            "basicInfo.mobileNumber": mobileNumber,
+            _id: { $ne: userId }
+        });
+        if (existingUser) {
+            return res.status(400).json({
+                message: "Account already registered"
+            });
+        }
         const user = await UserAccount.findById(userId);
         const hashedPassword = await bcrypt.hash(password, 10)
         const addBasicInfo = await UserAccount.findByIdAndUpdate(user, {
@@ -164,6 +173,11 @@ exports.addFamilyMember = async (req, res, next) => {
         if (!userId) {
             return res.status(400).json({ message: "user id needed" });
         }
+        const existingUser = await UserAccount.findOne({ "basicInfo.mobileNumber": mobile });
+        const existingFamily = await FamilyMember.findOne({ mobile });
+        if (existingUser || existingFamily) {
+            return res.status(400).json({ message: "Mobile number already registered" });
+        }
         const addressDoc = await Address.create({
             ...address
         });
@@ -245,7 +259,7 @@ exports.completeSignUp = async (req, res, next) => {
         }
         const familyMembers = await FamilyMember.find({ userId });
         for (const member of familyMembers) {
-            const existing = await UserAccount.findOne({ "basicInfo.email": member.email });
+            const existing = await UserAccount.findOne({ "basicInfo.mobileNumber": member.mobile });
             if (existing) continue;
             const newFamilyUser = await UserAccount.create({
                 accountTypeId: user.accountTypeId,
@@ -327,6 +341,11 @@ exports.signIn = async (req, res, next) => {
             return res.status(404).json({
                 message: 'No account found with this email'
             });
+        }
+        if (user.status !== "completed") {
+            return res.status(401).json({
+                message: 'Account not created. Kindly register'
+            })
         }
         const passwordCheck = await bcrypt.compare(password, user.basicInfo.password);
         if (!passwordCheck) {
