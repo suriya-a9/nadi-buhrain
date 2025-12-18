@@ -16,6 +16,7 @@ import LoadingScreen from "./pages/LoadingScreen";
 import ServiceRequest from "./pages/ServiceRequest";
 import ServiceRequestList from "./pages/ServiceRequestList";
 import Points from "./pages/Points";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -140,6 +141,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
