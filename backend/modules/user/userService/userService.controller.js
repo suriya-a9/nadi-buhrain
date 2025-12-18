@@ -8,7 +8,7 @@ exports.createRequest = async (req, res, next) => {
     const { serviceId, issuesId, feedback, scheduleService, immediateAssistance, otherIssue } = req.body;
     try {
         const userId = req.user.id;
-        if(!userId){
+        if (!userId) {
             return res.status(401).json({
                 message: "user id needed"
             })
@@ -72,15 +72,25 @@ exports.userServiceList = async (req, res, next) => {
         if (!userId) {
             return res.status(404).json({
                 message: "user id needed"
-            })
+            });
         }
-        const userServicesList = await UserService.find({ userId: userId })
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 1;
+        const skip = (page - 1) * limit;
+
+        const totalCount = await UserService.countDocuments({ userId });
+
+        const userServicesList = await UserService.find({ userId })
             .populate('serviceId')
             .populate('issuesId')
             .populate('technicianId')
+            .skip(skip)
+            .limit(limit);
+
         const formattedList = userServicesList.map(service => {
             const formattedTimestamps = {};
-            Object.entries(service.statusTimestamps).forEach(([key, value]) => {
+            Object.entries(service.statusTimestamps || {}).forEach(([key, value]) => {
                 formattedTimestamps[key] = formatDate(value, true);
             });
             return {
@@ -93,9 +103,15 @@ exports.userServiceList = async (req, res, next) => {
         });
 
         res.status(200).json({
-            data: formattedList
-        })
+            data: formattedList,
+            pagination: {
+                totalItems: totalCount,
+                currentPage: page,
+                totalPages: Math.ceil(totalCount / limit),
+                pageSize: limit
+            }
+        });
     } catch (err) {
-        next(err)
+        next(err);
     }
-}
+};
