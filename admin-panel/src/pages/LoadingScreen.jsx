@@ -70,7 +70,7 @@ export default function LoadingScreen() {
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold">Loading Screen</h2>
                 {/* <button
-                    className="bg-bgGreen text-white px-4 py-2 rounded"
+                    className="bg-brandGreen text-white px-4 py-2 rounded"
                     onClick={() => setForm({ id: "", image: null }) || setOpen(true)}
                 >
                     + Upload New
@@ -81,7 +81,7 @@ export default function LoadingScreen() {
                 <div className="text-center text-gray-500 py-10">
                     <p className="text-lg">No loading screen uploaded yet.</p>
                     <button
-                        className="mt-4 bg-bgGreen hover:bg-green-700 text-white px-4 py-2 rounded shadow-md transition-all"
+                        className="mt-4 bg-brandGreen hover:bg-green-700 text-white px-4 py-2 rounded shadow-md transition-all"
                         onClick={() => setForm({ id: "", image: null }) || setOpen(true)}
                     >
                         ➕ Upload Loading Screen
@@ -131,7 +131,7 @@ export default function LoadingScreen() {
 
                     <button
                         type="submit"
-                        className="bg-bgGreen w-full text-white py-2 rounded"
+                        className="bg-brandGreen w-full text-white py-2 rounded"
                     >
                         {form.id ? "Update" : "Upload"}
                     </button>
