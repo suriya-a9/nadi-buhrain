@@ -102,7 +102,7 @@ export default function Technicians() {
                 <h2 className="text-2xl font-semibold">Technicians List</h2>
                 <button
                     onClick={openCreate}
-                    className="bg-brandGreen text-white px-4 py-2 rounded"
+                    className="bg-bgGreen text-white px-4 py-2 rounded"
                 >
                     Add Technician
                 </button>

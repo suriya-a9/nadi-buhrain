@@ -70,7 +70,7 @@ export default function Services() {
                 <h2 className="text-2xl font-semibold">Services</h2>
 
                 <button
-                    className="bg-brandGreen text-white px-4 py-2 rounded"
+                    className="bg-bgGreen text-white px-4 py-2 rounded"
                     onClick={() => {
                         setForm({ id: "", name: "", serviceImage: null, serviceLogo: null });
                         setOpenCanvas(true);
