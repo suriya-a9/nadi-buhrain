@@ -61,7 +61,7 @@ export default function Register() {
 
                         <button
                             type="submit"
-                            className="w-full py-3 bg-brandGreen text-white rounded-lg hover:bg-brandGreen"
+                            className="w-full py-3 bg-bgGreen text-white rounded-lg hover:bg-bgGreen"
                         >
                             Sign Up
                         </button>
@@ -69,14 +69,14 @@ export default function Register() {
 
                     <p className="text-center mt-5">
                         Already have an account?
-                        <Link className="text-brandGreen ml-1" to="/login">
+                        <Link className="text-bgGreen ml-1" to="/login">
                             Sign In
                         </Link>
                     </p>
                 </div>
             </div>
 
-            <div className="hidden lg:flex lg:w-1/2 bg-brandGreen items-center justify-center">
+            <div className="hidden lg:flex lg:w-1/2 bg-bgGreen items-center justify-center">
                 <img
                     src="/assets/logo.webp"
                     alt="logo"
