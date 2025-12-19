@@ -79,7 +79,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
                     <div className={sectionTitle}>Points</div>
                     <NavLink to="/points" className={linkClasses}>
-                       <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;Points List
+                        <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;Points List
+                    </NavLink>
+
+                    <div className={sectionTitle}>Points</div>
+                    <NavLink to="/user-logs" className={linkClasses}>
+                        <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;User Activity
                     </NavLink>
                 </nav>
             </aside>

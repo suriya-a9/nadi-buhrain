@@ -7,6 +7,7 @@ const config = require('../../config/default');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Notification = require('../adminPanel/notification/notification.model');
+const UserLog = require('../userLogs/userLogs.model');
 
 exports.startSignUp = async (req, res, next) => {
     const { accountTypeId } = req.body;
@@ -293,6 +294,12 @@ exports.completeSignUp = async (req, res, next) => {
             time: new Date(),
             read: false
         });
+        await UserLog.create({
+            userId: user._id,
+            log: "Account created",
+            status: "Account created",
+            time: new Date()
+        })
         const io = req.app.get('io');
         io.emit('notification', notification);
         const token = jwt.sign(
