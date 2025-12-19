@@ -438,7 +438,13 @@ exports.updateBasicInfoAndAddress = async (req, res, next) => {
                 time: new Date()
             });
         }
-
+        await UserLog.create({
+            userId: user._id,
+            log: 'Updated profile details',
+            status: "Updated",
+            logo: "/assets/user-login-logo.webp",
+            time: new Date()
+        })
         res.status(200).json({
             message: "Basic info and address updated successfully"
         });

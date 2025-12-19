@@ -35,6 +35,13 @@ exports.singleRequest = async (req, res, next) => {
             quantity,
             notes
         });
+        await UserLog.create({
+            userId: req.user.id,
+            log: `Requested for ${product.productName}`,
+            status: "Requested",
+            logo: "/assets/product-management.webp",
+            time: new Date()
+        });
         res.status(201).json({
             message: "Material request created successfully"
         });
@@ -89,7 +96,13 @@ exports.bulkRequest = async (req, res, next) => {
         }));
 
         await MaterialRequest.insertMany(bulkData);
-
+        await UserLog.create({
+            userId: req.user.id,
+            log: `Bulk requested for products`,
+            status: "Requested",
+            logo: "/assets/product-management.webp",
+            time: new Date()
+        });
         res.status(201).json({
             message: "Bulk material requests submitted successfully",
             totalRequests: requests.length
@@ -139,7 +152,13 @@ exports.responseMaterialRequest = async (req, res, next) => {
                     count: reqQty.toString()
                 });
             }
-
+            await UserLog.create({
+                userId: req.user.id,
+                log: `Processed material request for ${inventory.productName}`,
+                status: "Requested",
+                logo: "/assets/product-management.webp",
+                time: new Date()
+            });
             return res.status(200).json({
                 message: "Request processed, inventory and spare parts updated",
                 data: request

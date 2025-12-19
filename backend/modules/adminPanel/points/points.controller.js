@@ -1,6 +1,7 @@
 const Points = require('./points.model');
 const UserAccount = require('../../userAccount/userAccount.model');
 const Request = require('../../requests/request.model');
+const UserLog = require("../../userLogs/userLogs.model");
 
 exports.addPoints = async (req, res, next) => {
     const { points, accountType } = req.body;
@@ -9,6 +10,13 @@ exports.addPoints = async (req, res, next) => {
             points,
             accountType
         })
+        await UserLog.create({
+            userId: req.user.id,
+            log: `${points} added to ${accountType}`,
+            status: "Added",
+            logo: "/assets/badge.webp.webp",
+            time: new Date()
+        });
         res.status(201).json({
             message: "points added",
             data: pointsData
@@ -33,11 +41,18 @@ exports.listPoints = async (req, res, next) => {
 exports.updatePoints = async (req, res, next) => {
     const { id, ...updateFields } = req.body;
     try {
-        await Points.findByIdAndUpdate(
+        const updatedPoints = await Points.findByIdAndUpdate(
             id,
             updateFields,
             { new: true }
-        )
+        );
+        await UserLog.create({
+            userId: req.user.id,
+            log: `${updatedPoints.points} Points updated`,
+            status: "Updated",
+            logo: "/assets/badge.webp",
+            time: new Date()
+        });
         res.status(200).json({
             message: "Updated successfully"
         })
@@ -68,7 +83,13 @@ exports.requestPointsToFamily = async (req, res, next) => {
             receiverId: receiver._id,
             points
         });
-
+        await UserLog.create({
+            userId: req.user.id,
+            log: `${points} points requested`,
+            status: "Requested",
+            logo: "/assets/badge.webp",
+            time: new Date()
+        });
         res.status(201).json({
             message: "Request sent"
         });
@@ -112,7 +133,13 @@ exports.transferPointsWithFamily = async (req, res, next) => {
 
             request.status = "accepted";
             await request.save();
-
+            await UserLog.create({
+                userId: req.user.id,
+                log: "Accepted the point request",
+                status: "Accepted",
+                logo: "/assets/badge.webp",
+                time: new Date()
+            });
             return res.status(200).json({ message: "Points transferred successfully" });
         } else if (action === "reject") {
             if (!reason) {
@@ -121,6 +148,14 @@ exports.transferPointsWithFamily = async (req, res, next) => {
             request.status = "rejected";
             request.reason = reason;
             await request.save();
+            await UserLog.create({
+                userId: req.user.id,
+                log: "Rejected the point request",
+                status: "Rejected",
+                logo: "/assets/badge.webp",
+                time: new Date()
+            });
+            retur
             return res.status(200).json({ message: "Request rejected" });
         } else {
             return res.status(400).json({ message: 'Invalid action' });

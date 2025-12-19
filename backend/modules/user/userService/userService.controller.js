@@ -3,6 +3,7 @@ const UserService = require('./userService.model');
 const formatDate = require('../../../utils/formatDate');
 const UserAccount = require("../../userAccount/userAccount.model");
 const Notification = require('../../../modules/adminPanel/notification/notification.model');
+const UserLog = require("../../userLogs/userLogs.model");
 
 exports.createRequest = async (req, res, next) => {
     const { serviceId, issuesId, feedback, scheduleService, immediateAssistance, otherIssue } = req.body;
@@ -58,6 +59,13 @@ exports.createRequest = async (req, res, next) => {
         });
         const io = req.app.get('io');
         io.emit('notification', notification);
+        await UserLog.create({
+            userId: req.user.id,
+            log: `New service requested submitted`,
+            status: "Submitted",
+            logo: "/assets/service request.webp",
+            time: new Date()
+        });
         res.status(201).json({
             message: "Service created successfully",
             data: requestCreate
