@@ -297,7 +297,8 @@ exports.completeSignUp = async (req, res, next) => {
         await UserLog.create({
             userId: user._id,
             log: "Account created",
-            status: "Account created",
+            status: "New Account",
+            logo: "/assets/user-creation.webp",
             time: new Date()
         })
         const io = req.app.get('io');
@@ -310,7 +311,8 @@ exports.completeSignUp = async (req, res, next) => {
         res.status(200).json({
             message: 'user registered successfully',
             data: user,
-            token: token
+            token: token,
+            accountType: account ? account.type : null
         })
     } catch (err) {
         next(err);
@@ -366,13 +368,23 @@ exports.signIn = async (req, res, next) => {
                 message: 'Password mismatch'
             });
         }
+        const accountType = await Account.findById(user.accountTypeId);
+
         const token = jwt.sign(
             { id: user._id },
             config.jwt,
             { expiresIn: '30d' }
         );
+        await UserLog.create({
+            userId: user._id,
+            log: 'Signed In',
+            status: "Signed In",
+            logo: "/assets/user-login-logo.webp",
+            time: new Date()
+        })
         res.status(200).json({
-            token: token
+            token: token,
+            accountType: accountType ? accountType.type : null
         });
     } catch (err) {
         next(err);
@@ -381,33 +393,34 @@ exports.signIn = async (req, res, next) => {
 
 exports.updateBasicInfoAndAddress = async (req, res, next) => {
     const { userId, basicInfo, address } = req.body;
-
     try {
+        let updatedFields = [];
+
         if (basicInfo) {
             const updateBasic = {};
-
             for (const key in basicInfo) {
                 if (key === "password") {
                     updateBasic["basicInfo.password"] =
                         await bcrypt.hash(basicInfo.password, 10);
+                    updatedFields.push("password");
                 } else {
                     updateBasic[`basicInfo.${key}`] = basicInfo[key];
+                    updatedFields.push(key);
                 }
             }
-
             await UserAccount.findByIdAndUpdate(
                 userId,
                 { $set: updateBasic },
                 { new: true }
             );
         }
+
         if (address) {
             const updateAddress = {};
-
             for (const key in address) {
                 updateAddress[key] = address[key];
+                updatedFields.push(`address.${key}`);
             }
-
             await Address.findOneAndUpdate(
                 { userId },
                 { $set: updateAddress },
@@ -415,10 +428,20 @@ exports.updateBasicInfoAndAddress = async (req, res, next) => {
             );
         }
 
+        if (updatedFields.length > 0) {
+            const logMessage = `Updated fields: ${updatedFields.join(", ")}`;
+            await UserLog.create({
+                userId,
+                log: logMessage,
+                status: "Signed In",
+                logo: "/assets/update-profile.webp",
+                time: new Date()
+            });
+        }
+
         res.status(200).json({
             message: "Basic info and address updated successfully"
         });
-
     } catch (err) {
         next(err);
     }

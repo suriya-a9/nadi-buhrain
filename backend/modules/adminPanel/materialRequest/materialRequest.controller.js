@@ -1,6 +1,7 @@
 const MaterialRequest = require('./materialRequest.model');
 const Inventory = require("../inventory/inventory.model");
 const SpareParts = require("../spareParts/spareParts.model");
+const UserLog = require("../../userLogs/userLogs.model");
 
 exports.singleRequest = async (req, res, next) => {
     const { productId, quantity, notes } = req.body;

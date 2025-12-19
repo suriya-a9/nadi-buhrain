@@ -21,7 +21,7 @@ exports.addPoints = async (req, res, next) => {
 exports.listPoints = async (req, res, next) => {
     try {
         const pointsList = await Points.find()
-        .populate("accountType");
+            .populate("accountType");
         res.status(200).json({
             data: pointsList
         })
@@ -47,26 +47,35 @@ exports.updatePoints = async (req, res, next) => {
 }
 
 exports.requestPointsToFamily = async (req, res, next) => {
-    const { familyId, points } = req.body;
+    const { mobileNumber, points } = req.body;
     try {
         if (!req.user.id) {
             return res.status(400).json({
                 message: 'User id is required'
             });
         }
+
+        const receiver = await UserAccount.findOne({ "basicInfo.mobileNumber": mobileNumber });
+        if (!receiver) {
+            return res.status(404).json({
+                message: 'Receiver not found'
+            });
+        }
+
         await Request.create({
             request: "Requesting points transfer",
             senderId: req.user.id,
-            receiverId: familyId,
-            points: points
-        })
+            receiverId: receiver._id,
+            points
+        });
+
         res.status(201).json({
-            message: "request sent"
-        })
+            message: "Request sent"
+        });
     } catch (err) {
         next(err);
     }
-}
+};
 
 exports.transferPointsWithFamily = async (req, res, next) => {
     const { requestId, action, reason } = req.body;
