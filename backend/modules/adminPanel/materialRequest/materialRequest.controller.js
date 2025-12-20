@@ -175,3 +175,48 @@ exports.responseMaterialRequest = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.productTechnicians = async (req, res, next) => {
+    try {
+        const productId = req.params.productId;
+        const requests = await MaterialRequest.find({ productId })
+            .populate('technicianId', 'firstName lastName email');
+        const data = requests.map(r => ({
+            _id: r._id,
+            technician: r.technicianId,
+            quantity: r.quantity,
+            status: r.status
+        }));
+        res.json({ data });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.listMaterialRequests = async (req, res, next) => {
+    try {
+        const listData = await MaterialRequest.find()
+            .populate("technicianId")
+            .populate("productId");
+        res.status(200).json({
+            success: true,
+            data: listData
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.listSpareParts = async (req, res, next) => {
+    try {
+        const listData = await SpareParts.find()
+            .populate("technicianId")
+            .populate("productId");
+        res.status(200).json({
+            success: true,
+            data: listData
+        })
+    } catch (err) {
+        next(err)
+    }
+}

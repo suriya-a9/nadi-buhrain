@@ -27,7 +27,7 @@ exports.addInventory = async (req, res, next) => {
 
 exports.listInventory = async (req, res, next) => {
     try {
-        const productList = await Inventory.find({ stock: true });
+        const productList = await Inventory.find();
         res.status(200).json({
             data: productList
         })

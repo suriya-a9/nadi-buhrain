@@ -3,8 +3,10 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaRegFileImage, FaUsers } from "react-icons/fa";
 import { VscGitPullRequestGoToChanges, VscRequestChanges } from "react-icons/vsc";
-import { MdMiscellaneousServices, MdVerifiedUser } from "react-icons/md";
+import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits } from "react-icons/md";
+import { BiCartAdd } from "react-icons/bi";
 import { CgUnavailable } from "react-icons/cg";
+import { FaWarehouse } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
@@ -80,6 +82,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <div className={sectionTitle}>Points</div>
                     <NavLink to="/points" className={linkClasses}>
                         <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;Points List
+                    </NavLink>
+
+                    <div className={sectionTitle}>Inventory</div>
+                    <NavLink to="/inventory" className={linkClasses}>
+                        <FaWarehouse size={20} /> &nbsp;&nbsp;&nbsp;Inventory List
+                    </NavLink>
+                    <NavLink to="/material-requests" className={linkClasses}>
+                        <MdOutlineProductionQuantityLimits size={20} /> &nbsp;&nbsp;&nbsp;Material Requests
+                    </NavLink>
+                    <NavLink to="/spare-parts" className={linkClasses}>
+                        <BiCartAdd size={20} /> &nbsp;&nbsp;&nbsp;Spare Parts
                     </NavLink>
 
                     <div className={sectionTitle}>Points</div>
