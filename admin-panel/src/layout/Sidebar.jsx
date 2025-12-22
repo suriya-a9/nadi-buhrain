@@ -1,13 +1,16 @@
 import { NavLink } from "react-router-dom";
-import { TbLayoutDashboard } from "react-icons/tb";
+import { TbLayoutDashboard, TbLogs } from "react-icons/tb";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaRegFileImage, FaUsers } from "react-icons/fa";
+import { LuFileTerminal } from "react-icons/lu";
 import { VscGitPullRequestGoToChanges, VscRequestChanges } from "react-icons/vsc";
-import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits } from "react-icons/md";
+import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits, MdOutlineAccountBox } from "react-icons/md";
+import { PiBuildingApartment } from "react-icons/pi";
 import { BiCartAdd } from "react-icons/bi";
 import { CgUnavailable } from "react-icons/cg";
 import { FaWarehouse, FaClipboardUser } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
+import { GiRoad } from "react-icons/gi";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
     const linkClasses = ({ isActive }) =>
@@ -45,6 +48,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/" className={linkClasses}>
                         <TbLayoutDashboard size={20} /> &nbsp;&nbsp;&nbsp;Dashboard
                     </NavLink>
+                    <NavLink to="/account-type" className={linkClasses}>
+                        <MdOutlineAccountBox size={20} /> &nbsp;&nbsp;&nbsp;Account Type
+                    </NavLink>
                     <NavLink to="/splash-screen" className={linkClasses}>
                         <BsThreeDotsVertical size={20} /> &nbsp;&nbsp;&nbsp;Splash screen
                     </NavLink>
@@ -52,7 +58,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                         <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
                     </NavLink>
                     <NavLink to="/terms-condition" className={linkClasses}>
-                        <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
+                        <LuFileTerminal size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
                     </NavLink>
 
                     <div className={sectionTitle}>Requests</div>
@@ -66,6 +72,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <div className={sectionTitle}>Services</div>
                     <NavLink to="/services" className={linkClasses}>
                         <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Service List
+                    </NavLink>
+                    <NavLink to="/issues" className={linkClasses}>
+                        <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Issues
                     </NavLink>
 
                     <div className={sectionTitle}>Users</div>
@@ -83,6 +92,14 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     </NavLink>
                     <NavLink to="/technician-skill" className={linkClasses}>
                         <FaClipboardUser size={20} /> &nbsp;&nbsp;&nbsp;Technicians Skill List
+                    </NavLink>
+
+                    <div className={sectionTitle}>Address</div>
+                    <NavLink to="/road" className={linkClasses}>
+                        <GiRoad size={20} /> &nbsp;&nbsp;&nbsp;Road Type
+                    </NavLink>
+                    <NavLink to="/block" className={linkClasses}>
+                        <PiBuildingApartment size={20} /> &nbsp;&nbsp;&nbsp;Block Type
                     </NavLink>
 
                     <div className={sectionTitle}>Points</div>
@@ -103,7 +120,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
                     <div className={sectionTitle}>Logs</div>
                     <NavLink to="/user-logs" className={linkClasses}>
-                        <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;User Activity
+                        <TbLogs size={20} /> &nbsp;&nbsp;&nbsp;User Activity
                     </NavLink>
                 </nav>
             </aside>

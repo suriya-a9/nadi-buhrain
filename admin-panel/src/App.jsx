@@ -24,6 +24,10 @@ import MaterialRequests from "./pages/MaterialRequests";
 import SpareParts from "./pages/SpareParts";
 import TechnicianSkills from "./pages/TechnicianSkillSet";
 import TermsAndCondition from "./pages/TermsAndCondition";
+import Issues from "./pages/Issues";
+import AccountType from "./pages/AccountType";
+import Road from "./pages/Road";
+import Block from "./pages/Block";
 
 export default function App() {
   return (
@@ -100,7 +104,7 @@ export default function App() {
               }
             />
             <Route
-              path="/splash-screen"
+              path="/about-screen"
               element={
                 <PrivateRoute>
                   <DashboardLayout>
@@ -110,7 +114,7 @@ export default function App() {
               }
             />
             <Route
-              path="/about-screen"
+              path="/splash-screen"
               element={
                 <PrivateRoute>
                   <DashboardLayout>
@@ -205,6 +209,46 @@ export default function App() {
                 <PrivateRoute>
                   <DashboardLayout>
                     <TermsAndCondition />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/issues"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Issues />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/account-type"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <AccountType />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/road"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Road />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/block"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Block />
                   </DashboardLayout>
                 </PrivateRoute>
               }
