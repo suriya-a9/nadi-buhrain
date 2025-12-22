@@ -28,6 +28,7 @@ import Issues from "./pages/Issues";
 import AccountType from "./pages/AccountType";
 import Road from "./pages/Road";
 import Block from "./pages/Block";
+import ServiceRequestDetails from "./pages/ServiceRequestDetails";
 
 export default function App() {
   return (
@@ -249,6 +250,16 @@ export default function App() {
                 <PrivateRoute>
                   <DashboardLayout>
                     <Block />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/service-requests/:id"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <ServiceRequestDetails />
                   </DashboardLayout>
                 </PrivateRoute>
               }

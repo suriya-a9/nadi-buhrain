@@ -51,15 +51,6 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/account-type" className={linkClasses}>
                         <MdOutlineAccountBox size={20} /> &nbsp;&nbsp;&nbsp;Account Type
                     </NavLink>
-                    <NavLink to="/splash-screen" className={linkClasses}>
-                        <BsThreeDotsVertical size={20} /> &nbsp;&nbsp;&nbsp;Splash screen
-                    </NavLink>
-                    <NavLink to="/about-screen" className={linkClasses}>
-                        <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
-                    </NavLink>
-                    <NavLink to="/terms-condition" className={linkClasses}>
-                        <LuFileTerminal size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
-                    </NavLink>
 
                     <div className={sectionTitle}>Requests</div>
                     <NavLink to="/service-requests" className={linkClasses}>
@@ -116,6 +107,17 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     </NavLink>
                     <NavLink to="/spare-parts" className={linkClasses}>
                         <BiCartAdd size={20} /> &nbsp;&nbsp;&nbsp;Spare Parts
+                    </NavLink>
+
+                    <div className={sectionTitle}>Settings</div>
+                    <NavLink to="/splash-screen" className={linkClasses}>
+                        <BsThreeDotsVertical size={20} /> &nbsp;&nbsp;&nbsp;Splash screen
+                    </NavLink>
+                    <NavLink to="/about-screen" className={linkClasses}>
+                        <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
+                    </NavLink>
+                    <NavLink to="/terms-condition" className={linkClasses}>
+                        <LuFileTerminal size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
                     </NavLink>
 
                     <div className={sectionTitle}>Logs</div>

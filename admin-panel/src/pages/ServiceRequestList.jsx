@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Table from "../components/Table";
 import api from "../services/api";
 import Pagination from "../components/Pagination";
@@ -10,6 +11,7 @@ const getLastUpdatedStatus = (statusTimestamps = {}) => {
 };
 
 export default function ServiceRequestList() {
+    const navigate = useNavigate();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -231,7 +233,7 @@ export default function ServiceRequestList() {
                 actions={(row) => (
                     <button
                         className="px-2 py-1 bg-blue-500 text-white rounded text-sm"
-                        onClick={() => handleView(row)}
+                        onClick={() => navigate(`/service-requests/${row._id}`)}
                     >
                         View
                     </button>
