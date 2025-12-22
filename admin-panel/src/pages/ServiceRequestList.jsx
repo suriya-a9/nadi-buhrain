@@ -224,7 +224,7 @@ export default function ServiceRequestList() {
                             className="absolute inset-0 bg-black opacity-40"
                             onClick={() => setDetailsOpen(false)}
                         />
-                        <div className="relative bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded shadow-lg max-w-2xl w-full z-10 max-h-[90vh] overflow-auto">
+                        <div className="relative bg-white text-black p-6 rounded shadow-lg max-w-2xl w-full z-10 max-h-[90vh] overflow-auto">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold">Service Request Details</h3>
                                 <button
@@ -237,39 +237,39 @@ export default function ServiceRequestList() {
                             <div className="grid grid-cols-2 gap-3 text-sm mb-4">
                                 <div>
                                     <div className="font-medium">Request ID</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.serviceRequestID}</div>
+                                    <div className="text-gray-700">{selected.serviceRequestID}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Requested By</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.userId?.basicInfo?.fullName}</div>
+                                    <div className="text-gray-700">{selected.userId?.basicInfo?.fullName}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Service Name</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.serviceId?.name}</div>
+                                    <div className="text-gray-700">{selected.serviceId?.name}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Issue Name</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.issuesId?.issue}</div>
+                                    <div className="text-gray-700">{selected.issuesId?.issue}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Feedback</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.feedback}</div>
+                                    <div className="text-gray-700">{selected.feedback}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Scheduled Date</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.scheduleService}</div>
+                                    <div className="text-gray-700">{selected.scheduleService}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Is Urgent?</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.immediateAssistance ? "Yes" : "No"}</div>
+                                    <div className="text-gray-700">{selected.immediateAssistance ? "Yes" : "No"}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Status</div>
-                                    <div className="text-gray-700 dark:text-gray-300">{selected.serviceStatus}</div>
+                                    <div className="text-gray-700">{selected.serviceStatus}</div>
                                 </div>
                                 <div>
                                     <div className="font-medium">Assigned Technician</div>
-                                    <div className="text-gray-700 dark:text-gray-300">
+                                    <div className="text-gray-700">
                                         {selected.technicianId
                                             ? (selected.technicianId.firstName
                                                 ? `${selected.technicianId.firstName} ${selected.technicianId.lastName || ""} (${selected.technicianId.email || ""})`
@@ -279,7 +279,7 @@ export default function ServiceRequestList() {
                                 </div>
                                 <div>
                                     <div className="font-medium">Technician Assignment Status</div>
-                                    <div className="text-gray-700 dark:text-gray-300">
+                                    <div className="text-gray-700">
                                         {selected.technicianAccepted === true
                                             ? "Accepted"
                                             : selected.technicianId
@@ -300,7 +300,7 @@ export default function ServiceRequestList() {
                                     {Object.entries(selected.statusTimestamps || {}).map(([status, time]) => (
                                         <div key={status}>
                                             <span className="font-medium">{status}:</span>{" "}
-                                            <span className="text-gray-700 dark:text-gray-300">{time || "-"}</span>
+                                            <span className="text-gray-700">{time || "-"}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -335,7 +335,7 @@ export default function ServiceRequestList() {
                             {selected.technicianAccepted === true && (
                                 <div className="mb-4">
                                     <div className="font-medium">Technician Work Status</div>
-                                    <div className="text-gray-700 dark:text-gray-300">
+                                    <div className="text-gray-700">
                                         {techWorkStatusLoading
                                             ? "Loading..."
                                             : techWorkStatus

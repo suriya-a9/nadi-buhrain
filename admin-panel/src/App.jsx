@@ -22,6 +22,8 @@ import Logs from "./pages/Logs";
 import Inventory from "./pages/Inventory";
 import MaterialRequests from "./pages/MaterialRequests";
 import SpareParts from "./pages/SpareParts";
+import TechnicianSkills from "./pages/TechnicianSkillSet";
+import TermsAndCondition from "./pages/TermsAndCondition";
 
 export default function App() {
   return (
@@ -183,6 +185,26 @@ export default function App() {
                 <PrivateRoute>
                   <DashboardLayout>
                     <SpareParts />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/technician-skill"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <TechnicianSkills />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/terms-condition"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <TermsAndCondition />
                   </DashboardLayout>
                 </PrivateRoute>
               }

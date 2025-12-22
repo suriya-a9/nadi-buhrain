@@ -6,7 +6,7 @@ import { VscGitPullRequestGoToChanges, VscRequestChanges } from "react-icons/vsc
 import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { BiCartAdd } from "react-icons/bi";
 import { CgUnavailable } from "react-icons/cg";
-import { FaWarehouse } from "react-icons/fa6";
+import { FaWarehouse, FaClipboardUser } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
@@ -51,6 +51,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/about-screen" className={linkClasses}>
                         <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
                     </NavLink>
+                    <NavLink to="/terms-condition" className={linkClasses}>
+                        <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
+                    </NavLink>
 
                     <div className={sectionTitle}>Requests</div>
                     <NavLink to="/service-requests" className={linkClasses}>
@@ -78,6 +81,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/technicians" className={linkClasses}>
                         <FaUsers size={20} /> &nbsp;&nbsp;&nbsp;Technicians List
                     </NavLink>
+                    <NavLink to="/technician-skill" className={linkClasses}>
+                        <FaClipboardUser size={20} /> &nbsp;&nbsp;&nbsp;Technicians Skill List
+                    </NavLink>
 
                     <div className={sectionTitle}>Points</div>
                     <NavLink to="/points" className={linkClasses}>
@@ -95,7 +101,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                         <BiCartAdd size={20} /> &nbsp;&nbsp;&nbsp;Spare Parts
                     </NavLink>
 
-                    <div className={sectionTitle}>Points</div>
+                    <div className={sectionTitle}>Logs</div>
                     <NavLink to="/user-logs" className={linkClasses}>
                         <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;User Activity
                     </NavLink>
