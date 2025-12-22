@@ -29,11 +29,24 @@ export default function ServiceRequestList() {
     useEffect(() => {
         setCurrentPage(1);
     }, [activeTab]);
-    let tabData = acceptedRequests;
-    if (activeTab === 1) tabData = rejectedRequests;
-    if (activeTab === 2) tabData = notAssignedRequests;
-    const totalPages = Math.ceil(tabData.length / ITEMS_PER_PAGE);
-    const paginatedData = tabData.slice(
+    const [search, setSearch] = useState("");
+    let tabData = requests;
+    if (activeTab === 1) tabData = acceptedRequests;
+    if (activeTab === 2) tabData = rejectedRequests;
+    if (activeTab === 3) tabData = notAssignedRequests;
+    const filteredData = tabData.filter(r => {
+        const requestId = r.serviceRequestID?.toLowerCase() || "";
+        const requestedBy = r.userId?.basicInfo?.fullName?.toLowerCase() || "";
+        const status = r.serviceStatus?.toLowerCase() || "";
+        const q = search.toLowerCase();
+        return (
+            requestId.includes(q) ||
+            requestedBy.includes(q) ||
+            status.includes(q)
+        );
+    });
+    const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+    const paginatedData = filteredData.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
@@ -163,22 +176,37 @@ export default function ServiceRequestList() {
                     className={`px-4 py-2 rounded ${activeTab === 0 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
                     onClick={() => setActiveTab(0)}
                 >
-                    Technician Accepted
+                    All
                 </button>
                 <button
                     className={`px-4 py-2 rounded ${activeTab === 1 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
                     onClick={() => setActiveTab(1)}
                 >
-                    Technician Pending / Rejected
+                    Technician Accepted
                 </button>
                 <button
                     className={`px-4 py-2 rounded ${activeTab === 2 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
                     onClick={() => setActiveTab(2)}
                 >
+                    Technician Pending / Rejected
+                </button>
+                <button
+                    className={`px-4 py-2 rounded ${activeTab === 3 ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+                    onClick={() => setActiveTab(3)}
+                >
                     Technician Not Assigned
                 </button>
             </div>
-
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold">Service Requests List</h2>
+                <input
+                    type="text"
+                    placeholder="Search by Request ID, Requested By, or Status"
+                    className="border px-3 py-2 rounded w-[350px]"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                />
+            </div>
             <Table
                 columns={[
                     { title: "Request ID", key: "serviceRequestID" },
