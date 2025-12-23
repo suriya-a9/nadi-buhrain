@@ -11,7 +11,7 @@ export default function Block() {
     const [editData, setEditData] = useState(null);
     const [form, setForm] = useState({
         name: "",
-        roadId: ""
+        roads: []
     });
     const ITEMS_PER_PAGE = 10;
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,17 +29,7 @@ export default function Block() {
 
     const loadBlockList = async () => {
         const res = await api.get("/block/");
-        const blocks = [];
-        res.data.data.forEach(road => {
-            (road.blocks || []).forEach(block => {
-                blocks.push({
-                    ...block,
-                    roadName: road.name,
-                    roadId: road._id
-                });
-            });
-        });
-        setBlockList(blocks);
+        setBlockList(res.data.data);
     };
 
     useEffect(() => {
@@ -48,7 +38,7 @@ export default function Block() {
     }, []);
 
     const openCreate = () => {
-        setForm({ name: "", roadId: "" });
+        setForm({ name: "", roads: [] });
         setEditData(null);
         setOpenCanvas(true);
     };
@@ -57,9 +47,18 @@ export default function Block() {
         setEditData(item);
         setForm({
             name: item.name,
-            roadId: item.roadId
+            roads: (item.roads || []).map(r => r._id || r),
         });
         setOpenCanvas(true);
+    };
+
+    const handleRoadCheckbox = (roadId) => {
+        setForm((prev) => {
+            const roads = prev.roads.includes(roadId)
+                ? prev.roads.filter(id => id !== roadId)
+                : [...prev.roads, roadId];
+            return { ...prev, roads };
+        });
     };
 
     const saveBlock = async (e) => {
@@ -91,6 +90,14 @@ export default function Block() {
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
+    const getRoadNames = (roads = []) => {
+        console.log("getRoadNames roads:", roads);
+        if (!Array.isArray(roads)) return "";
+        return roads
+            .map(r => (r && r.name ? r.name : ""))
+            .filter(Boolean)
+            .join(", ");
+    };
 
     return (
         <div>
@@ -106,7 +113,11 @@ export default function Block() {
             <Table
                 columns={[
                     { title: "Block Name", key: "name" },
-                    { title: "Road", key: "roadName" }
+                    {
+                        title: "Road(s)",
+                        key: "roads",
+                        render: getRoadNames
+                    }
                 ]}
                 data={paginatedBlock}
                 actions={(row) => (
@@ -150,20 +161,21 @@ export default function Block() {
                         />
                     </div>
                     <div>
-                        <label className="block mb-1 font-medium">Road</label>
-                        <select
-                            value={form.roadId}
-                            onChange={(e) => setForm({ ...form, roadId: e.target.value })}
-                            className="w-full border p-2 rounded"
-                            required
-                        >
-                            <option value="">Select Road</option>
+                        <label className="block mb-1 font-medium">Road(s)</label>
+                        <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto border rounded p-2">
                             {roadOptions.map((road) => (
-                                <option key={road._id} value={road._id}>
+                                <label key={road._id} className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        value={road._id}
+                                        checked={form.roads.includes(road._id)}
+                                        onChange={() => handleRoadCheckbox(road._id)}
+                                    />
                                     {road.name}
-                                </option>
+                                </label>
                             ))}
-                        </select>
+                        </div>
+                        <small className="text-gray-500">Select one or more roads</small>
                     </div>
                     <button className="w-full bg-bgGreen text-white py-2 rounded">
                         {editData ? "Update Block" : "Create Block"}

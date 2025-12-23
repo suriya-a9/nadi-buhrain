@@ -50,9 +50,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <NavLink to="/" className={linkClasses}>
                         <TbLayoutDashboard size={20} /> &nbsp;&nbsp;&nbsp;Dashboard
                     </NavLink>
-                    <NavLink to="/account-type" className={linkClasses}>
+                    {/* <NavLink to="/account-type" className={linkClasses}>
                         <MdOutlineAccountBox size={20} /> &nbsp;&nbsp;&nbsp;Account Type
-                    </NavLink>
+                    </NavLink> */}
                     {(role === "admin" || role === "service manager") && (
                         <>
                             <div className={sectionTitle}>Users</div>
@@ -80,9 +80,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/services" className={linkClasses}>
                                 <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Service List
                             </NavLink>
-                            <NavLink to="/issues" className={linkClasses}>
+                            {/* <NavLink to="/issues" className={linkClasses}>
                                 <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Issues
-                            </NavLink>
+                            </NavLink> */}
 
                             <div className={sectionTitle}>Users</div>
                             <NavLink to="/users" className={linkClasses}>
@@ -97,9 +97,9 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/technicians" className={linkClasses}>
                                 <FaUsers size={20} /> &nbsp;&nbsp;&nbsp;Technicians List
                             </NavLink>
-                            <NavLink to="/technician-skill" className={linkClasses}>
+                            {/* <NavLink to="/technician-skill" className={linkClasses}>
                                 <FaClipboardUser size={20} /> &nbsp;&nbsp;&nbsp;Technicians Skill List
-                            </NavLink>
+                            </NavLink> */}
 
                             <div className={sectionTitle}>Address</div>
                             <NavLink to="/road" className={linkClasses}>
@@ -114,7 +114,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                                 <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;Points List
                             </NavLink>
 
-                            <div className={sectionTitle}>Inventory</div>
+                            {/* <div className={sectionTitle}>Inventory</div>
                             <NavLink to="/inventory" className={linkClasses}>
                                 <FaWarehouse size={20} /> &nbsp;&nbsp;&nbsp;Inventory List
                             </NavLink>
@@ -123,7 +123,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             </NavLink>
                             <NavLink to="/spare-parts" className={linkClasses}>
                                 <BiCartAdd size={20} /> &nbsp;&nbsp;&nbsp;Spare Parts
-                            </NavLink>
+                            </NavLink> */}
 
                             <div className={sectionTitle}>Settings</div>
                             <NavLink to="/splash-screen" className={linkClasses}>
@@ -132,16 +132,16 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/about-screen" className={linkClasses}>
                                 <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
                             </NavLink>
-                            <NavLink to="/terms-condition" className={linkClasses}>
+                            {/* <NavLink to="/terms-condition" className={linkClasses}>
                                 <LuFileTerminal size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
-                            </NavLink>
+                            </NavLink> */}
                         </>
                     )}
 
-                    <div className={sectionTitle}>Logs</div>
+                    {/* <div className={sectionTitle}>Logs</div>
                     <NavLink to="/user-logs" className={linkClasses}>
                         <TbLogs size={20} /> &nbsp;&nbsp;&nbsp;User Activity
-                    </NavLink>
+                    </NavLink> */}
                 </nav>
             </aside>
         </>
