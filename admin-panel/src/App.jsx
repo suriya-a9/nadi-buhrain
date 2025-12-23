@@ -29,6 +29,7 @@ import AccountType from "./pages/AccountType";
 import Road from "./pages/Road";
 import Block from "./pages/Block";
 import ServiceRequestDetails from "./pages/ServiceRequestDetails";
+import AdminUser from "./pages/AdminUser";
 
 export default function App() {
   return (
@@ -260,6 +261,16 @@ export default function App() {
                 <PrivateRoute>
                   <DashboardLayout>
                     <ServiceRequestDetails />
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin-list"
+              element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <AdminUser />
                   </DashboardLayout>
                 </PrivateRoute>
               }
