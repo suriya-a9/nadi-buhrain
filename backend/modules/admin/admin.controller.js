@@ -105,3 +105,12 @@ exports.updateAdmin = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.forgotPassword = async (req, res, next) => {
+    const { email, password } = req.body;
+    try{
+
+    } catch(err){
+        next(err)
+    }
+}
