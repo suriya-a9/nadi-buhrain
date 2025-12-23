@@ -138,10 +138,10 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                         </>
                     )}
 
-                    {/* <div className={sectionTitle}>Logs</div>
+                    <div className={sectionTitle}>Logs</div>
                     <NavLink to="/user-logs" className={linkClasses}>
                         <TbLogs size={20} /> &nbsp;&nbsp;&nbsp;User Activity
-                    </NavLink> */}
+                    </NavLink>
                 </nav>
             </aside>
         </>
