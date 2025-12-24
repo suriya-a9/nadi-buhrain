@@ -287,6 +287,7 @@ exports.completeSignUp = async (req, res, next) => {
             }
             await FamilyMember.findByIdAndUpdate(member._id, { linkedUserId: newFamilyUser._id }, { new: true });
         }
+        user.accountStatus = true;
         user.status = "completed";
         user.singnUpCompleted = true;
         await user.save();
@@ -363,6 +364,11 @@ exports.signIn = async (req, res, next) => {
         if (user.status !== "completed") {
             return res.status(401).json({
                 message: 'Account not created. Kindly register'
+            })
+        }
+        if (user.accountStatus !== true) {
+            return res.status(401).json({
+                message: 'Account disabled'
             })
         }
         const passwordCheck = await bcrypt.compare(password, user.basicInfo.password);
@@ -443,7 +449,7 @@ exports.updateBasicInfoAndAddress = async (req, res, next) => {
             });
         }
         await UserLog.create({
-            userId: user._id,
+            userId: userId,
             log: 'Updated profile details',
             status: "Updated",
             logo: "/assets/user-login-logo.webp",

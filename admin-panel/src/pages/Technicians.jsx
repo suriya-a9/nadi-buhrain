@@ -3,6 +3,7 @@ import api from "../services/api";
 import Table from "../components/Table";
 import Offcanvas from "../components/Offcanvas";
 import Pagination from "../components/Pagination";
+import toast from "react-hot-toast";
 
 export default function Technicians() {
     const [technicians, setTechnicians] = useState([]);
@@ -92,7 +93,19 @@ export default function Technicians() {
         setOpenCanvas(false);
         loadTechnicians();
     };
-
+    const toggleTechnicianStatus = async (tech) => {
+        try {
+            await api.post(
+                "/technician/set-status",
+                { id: tech._id, status: !tech.status },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success("Technician status updated");
+            loadTechnicians();
+        } catch (err) {
+            toast.error("Failed to update technician status");
+        }
+    };
     const deleteTechnician = async (id) => {
         await api.post(
             "/technician/delete",
@@ -131,6 +144,11 @@ export default function Technicians() {
                         key: "role",
                         render: (role) => role?.skill || "-",
                     },
+                    {
+                        title: "Enabled",
+                        key: "status",
+                        render: (status) => status ? "Yes" : "No",
+                    },
                 ]}
                 data={paginatedTechnicians}
                 actions={(row) => (
@@ -141,13 +159,18 @@ export default function Technicians() {
                         >
                             Edit
                         </button>
-
                         <button
+                            onClick={() => toggleTechnicianStatus(row)}
+                            className={`px-3 py-1 rounded text-white ${row.status ? "bg-red-600" : "bg-green-600"}`}
+                        >
+                            {row.status ? "Disable" : "Enable"}
+                        </button>
+                        {/* <button
                             onClick={() => deleteTechnician(row._id)}
                             className="bg-red-600 text-white px-3 py-1 rounded"
                         >
                             Delete
-                        </button>
+                        </button> */}
                     </div>
                 )}
             />

@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { TbLayoutDashboard, TbLogs } from "react-icons/tb";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDotsVertical, BsPersonVideo3, BsReverseLayoutSidebarInsetReverse } from "react-icons/bs";
 import { FaRegFileImage, FaUsers } from "react-icons/fa";
 import { LuFileTerminal } from "react-icons/lu";
 import { VscGitPullRequestGoToChanges, VscRequestChanges } from "react-icons/vsc";
-import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits, MdOutlineAccountBox } from "react-icons/md";
+import { MdMiscellaneousServices, MdVerifiedUser, MdOutlineProductionQuantityLimits, MdOutlineAccountBox, MdErrorOutline } from "react-icons/md";
 import { PiBuildingApartment } from "react-icons/pi";
 import { BiCartAdd } from "react-icons/bi";
 import { CgUnavailable } from "react-icons/cg";
@@ -63,8 +63,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/admin-list" className={linkClasses}>
                                 <VscGitPullRequestGoToChanges size={20} /> &nbsp;&nbsp;&nbsp;Admin Users
                             </NavLink>
+                            <NavLink to="/roles" className={linkClasses}>
+                                <BsReverseLayoutSidebarInsetReverse size={20} /> &nbsp;&nbsp;&nbsp;Roles
+                            </NavLink>
                             <NavLink to="/role-manager" className={linkClasses}>
-                                <VscGitPullRequestGoToChanges size={20} /> &nbsp;&nbsp;&nbsp;Role Manager
+                                <BsPersonVideo3 size={20} /> &nbsp;&nbsp;&nbsp;Role Manager
                             </NavLink>
                         </>
                     )}
@@ -86,7 +89,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                                 <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Service List
                             </NavLink>
                             <NavLink to="/issues" className={linkClasses}>
-                                <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Issues
+                                <MdErrorOutline size={20} /> &nbsp;&nbsp;&nbsp;Issues
                             </NavLink>
                         </>
                     )}

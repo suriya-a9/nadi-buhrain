@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import Offcanvas from "../components/Offcanvas";
+import toast from "react-hot-toast";
 
 export default function AdminUser() {
     const [admins, setAdmins] = useState([]);
@@ -60,23 +61,42 @@ export default function AdminUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (editData) {
-            await api.post(`/admin/${editData._id}`, {
-                name: form.name,
-                role: form.role,
-                ...(form.password ? { password: form.password } : {}),
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-        } else {
-            await api.post("/admin/register", form, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+
+        try {
+            let res;
+
+            if (editData) {
+                res = await api.post(
+                    `/admin/${editData._id}`,
+                    {
+                        name: form.name,
+                        role: form.role,
+                        ...(form.password ? { password: form.password } : {}),
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+
+                toast.success(res.data.message);
+            } else {
+                res = await api.post("/admin/register", form, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                toast.success(res.data.message);
+            }
+
+            setOpenCanvas(false);
+            setForm({ name: "", email: "", password: "", role: "" });
+            setEditData(null);
+            fetchAdmins();
+
+        } catch (err) {
+            toast.error(
+                err.response?.data?.message || "Something went wrong"
+            );
         }
-        setOpenCanvas(false);
-        setForm({ name: "", email: "", password: "", role: "admin" });
-        setEditData(null);
-        fetchAdmins();
     };
 
     return (

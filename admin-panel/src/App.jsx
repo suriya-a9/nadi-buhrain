@@ -32,6 +32,7 @@ import Block from "./pages/Block";
 import ServiceRequestDetails from "./pages/ServiceRequestDetails";
 import AdminUser from "./pages/AdminUser";
 import RoleManager from "./pages/RoleManager";
+import Roles from "./pages/Roles";
 
 export default function App() {
   return (
@@ -87,6 +88,18 @@ export default function App() {
                   <PermissionRoute permission="admin-list">
                     <DashboardLayout>
                       <AdminUser />
+                    </DashboardLayout>
+                  </PermissionRoute>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/roles"
+              element={
+                <PrivateRoute>
+                  <PermissionRoute permission="admin-list">
+                    <DashboardLayout>
+                      <Roles />
                     </DashboardLayout>
                   </PermissionRoute>
                 </PrivateRoute>

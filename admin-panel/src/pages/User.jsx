@@ -47,6 +47,19 @@ export default function User() {
         loadUsers();
     }, []);
 
+    const toggleUserStatus = async (user) => {
+        try {
+            await api.post(
+                "/account-verify/set-status",
+                { id: user._id, status: !user.accountStatus },
+                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+            );
+            loadUsers();
+        } catch (err) {
+            alert("Failed to update user status");
+        }
+    };
+
     const renderIdProofs = (files = []) => {
         if (!files || !files.length) return <div className="text-gray-700">No ID proofs</div>;
         return (
@@ -85,7 +98,7 @@ export default function User() {
                     { title: "Mobile", key: "basicInfo.mobileNumber" },
                     { title: "Email", key: "basicInfo.email" },
                     { title: "Account Type", key: "accountTypeId.name" },
-                    { title: "Status", key: "accountVerification" }
+                    { title: "Status", key: "accountVerification" },
                 ]}
                 data={paginatedUsers}
                 actions={(row) => (
@@ -95,6 +108,12 @@ export default function User() {
                             className="px-2 py-1 bg-blue-500 text-white rounded text-sm"
                         >
                             View
+                        </button>
+                        <button
+                            onClick={() => toggleUserStatus(row)}
+                            className={`px-2 py-1 rounded text-sm ${row.accountStatus ? "bg-red-500" : "bg-green-500"} text-white`}
+                        >
+                            {row.accountStatus ? "Disable" : "Enable"}
                         </button>
                     </div>
                 )}
