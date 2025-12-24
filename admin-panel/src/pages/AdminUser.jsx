@@ -2,22 +2,16 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Offcanvas from "../components/Offcanvas";
 
-const ROLES = [
-    { value: "admin", label: "Admin" },
-    { value: "inventory manager", label: "Inventory Manager" },
-    { value: "points manager", label: "Points Manager" },
-    { value: "service manager", label: "Service Manager" },
-];
-
 export default function AdminUser() {
     const [admins, setAdmins] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [openCanvas, setOpenCanvas] = useState(false);
     const [editData, setEditData] = useState(null);
     const [form, setForm] = useState({
         name: "",
         email: "",
         password: "",
-        role: "admin",
+        role: "",
     });
     const [loading, setLoading] = useState(false);
 
@@ -32,8 +26,14 @@ export default function AdminUser() {
         setLoading(false);
     };
 
+    const fetchRoles = async () => {
+        const res = await api.get("/role/");
+        setRoles(res.data.data);
+    };
+
     useEffect(() => {
         fetchAdmins();
+        fetchRoles();
     }, []);
 
     const openCreate = () => {
@@ -41,7 +41,7 @@ export default function AdminUser() {
             name: "",
             email: "",
             password: "",
-            role: "admin",
+            role: roles[0]?._id || "",
         });
         setEditData(null);
         setOpenCanvas(true);
@@ -53,7 +53,7 @@ export default function AdminUser() {
             name: admin.name,
             email: admin.email,
             password: "",
-            role: admin.role,
+            role: admin.role?._id || admin.role,
         });
         setOpenCanvas(true);
     };
@@ -106,7 +106,9 @@ export default function AdminUser() {
                         <tr key={admin._id}>
                             <td className="border px-4 py-2">{admin.name}</td>
                             <td className="border px-4 py-2">{admin.email}</td>
-                            <td className="border px-4 py-2 capitalize">{admin.role}</td>
+                            <td className="border px-4 py-2 capitalize">
+                                {admin.role?.name || ""}
+                            </td>
                             <td className="border px-4 py-2">{new Date(admin.createdAt).toLocaleString()}</td>
                             <td className="border px-4 py-2">
                                 <button
@@ -156,8 +158,10 @@ export default function AdminUser() {
                             className="w-full border p-2 rounded"
                             required
                         >
-                            {ROLES.map(r => (
-                                <option key={r.value} value={r.value}>{r.label}</option>
+                            {roles.map(r => (
+                                <option key={r._id} value={r._id}>
+                                    {r.name.charAt(0).toUpperCase() + r.name.slice(1)}
+                                </option>
                             ))}
                         </select>
                     </div>

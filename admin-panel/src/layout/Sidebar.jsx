@@ -14,6 +14,7 @@ import { SlBadge } from "react-icons/sl";
 import { GiRoad } from "react-icons/gi";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
+    const { permissions } = useAuth();
     const { role } = useAuth();
     const linkClasses = ({ isActive }) =>
         `flex items-center p-3 rounded-lg transition font-medium
@@ -45,24 +46,29 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 </div>
 
                 <nav className="p-4">
-
-                    <div className={sectionTitle}>General</div>
-                    <NavLink to="/" className={linkClasses}>
-                        <TbLayoutDashboard size={20} /> &nbsp;&nbsp;&nbsp;Dashboard
-                    </NavLink>
-                    {/* <NavLink to="/account-type" className={linkClasses}>
-                        <MdOutlineAccountBox size={20} /> &nbsp;&nbsp;&nbsp;Account Type
-                    </NavLink> */}
-                    {(role === "admin" || role === "service manager") && (
+                    {permissions.includes("dashboard") && (
+                        <>
+                            <div className={sectionTitle}>General</div>
+                            <NavLink to="/" className={linkClasses}>
+                                <TbLayoutDashboard size={20} /> &nbsp;&nbsp;&nbsp;Dashboard
+                            </NavLink>
+                            <NavLink to="/account-type" className={linkClasses}>
+                                <MdOutlineAccountBox size={20} /> &nbsp;&nbsp;&nbsp;Account Type
+                            </NavLink>
+                        </>
+                    )}
+                    {permissions.includes("admin-list") && (
                         <>
                             <div className={sectionTitle}>Users</div>
                             <NavLink to="/admin-list" className={linkClasses}>
                                 <VscGitPullRequestGoToChanges size={20} /> &nbsp;&nbsp;&nbsp;Admin Users
                             </NavLink>
+                            <NavLink to="/role-manager" className={linkClasses}>
+                                <VscGitPullRequestGoToChanges size={20} /> &nbsp;&nbsp;&nbsp;Role Manager
+                            </NavLink>
                         </>
                     )}
-
-                    {(role === "admin" || role === "service manager") && (
+                    {permissions.includes("service-requests") && (
                         <>
                             <div className={sectionTitle}>Requests</div>
                             <NavLink to="/service-requests" className={linkClasses}>
@@ -73,34 +79,41 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             </NavLink>
                         </>
                     )}
-
-                    {(role === "admin") && (
+                    {permissions.includes("services") && (
                         <>
                             <div className={sectionTitle}>Services</div>
                             <NavLink to="/services" className={linkClasses}>
                                 <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Service List
                             </NavLink>
-                            {/* <NavLink to="/issues" className={linkClasses}>
+                            <NavLink to="/issues" className={linkClasses}>
                                 <MdMiscellaneousServices size={20} /> &nbsp;&nbsp;&nbsp;Issues
-                            </NavLink> */}
-
+                            </NavLink>
+                        </>
+                    )}
+                    {permissions.includes("users") && (
+                        <>
                             <div className={sectionTitle}>Users</div>
                             <NavLink to="/users" className={linkClasses}>
                                 <MdVerifiedUser size={20} /> &nbsp;&nbsp;&nbsp;Verified Users
                             </NavLink>
-
                             <NavLink to="/not-verified" className={linkClasses}>
                                 <CgUnavailable size={20} /> &nbsp;&nbsp;&nbsp;Not Verified Users
                             </NavLink>
-
+                        </>
+                    )}
+                    {permissions.includes("technicians") && (
+                        <>
                             <div className={sectionTitle}>Technicians</div>
                             <NavLink to="/technicians" className={linkClasses}>
                                 <FaUsers size={20} /> &nbsp;&nbsp;&nbsp;Technicians List
                             </NavLink>
-                            {/* <NavLink to="/technician-skill" className={linkClasses}>
+                            <NavLink to="/technician-skill" className={linkClasses}>
                                 <FaClipboardUser size={20} /> &nbsp;&nbsp;&nbsp;Technicians Skill List
-                            </NavLink> */}
-
+                            </NavLink>
+                        </>
+                    )}
+                    {permissions.includes("address") && (
+                        <>
                             <div className={sectionTitle}>Address</div>
                             <NavLink to="/road" className={linkClasses}>
                                 <GiRoad size={20} /> &nbsp;&nbsp;&nbsp;Road Type
@@ -108,13 +121,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/block" className={linkClasses}>
                                 <PiBuildingApartment size={20} /> &nbsp;&nbsp;&nbsp;Block Type
                             </NavLink>
-
+                        </>
+                    )}
+                    {permissions.includes("points") && (
+                        <>
                             <div className={sectionTitle}>Points</div>
                             <NavLink to="/points" className={linkClasses}>
                                 <SlBadge size={20} /> &nbsp;&nbsp;&nbsp;Points List
                             </NavLink>
-
-                            {/* <div className={sectionTitle}>Inventory</div>
+                        </>
+                    )}
+                    {permissions.includes("inventory") && (
+                        <>
+                            <div className={sectionTitle}>Inventory</div>
                             <NavLink to="/inventory" className={linkClasses}>
                                 <FaWarehouse size={20} /> &nbsp;&nbsp;&nbsp;Inventory List
                             </NavLink>
@@ -123,8 +142,11 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             </NavLink>
                             <NavLink to="/spare-parts" className={linkClasses}>
                                 <BiCartAdd size={20} /> &nbsp;&nbsp;&nbsp;Spare Parts
-                            </NavLink> */}
-
+                            </NavLink>
+                        </>
+                    )}
+                    {permissions.includes("Settings") && (
+                        <>
                             <div className={sectionTitle}>Settings</div>
                             <NavLink to="/splash-screen" className={linkClasses}>
                                 <BsThreeDotsVertical size={20} /> &nbsp;&nbsp;&nbsp;Splash screen
@@ -132,16 +154,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                             <NavLink to="/about-screen" className={linkClasses}>
                                 <FaRegFileImage size={20} /> &nbsp;&nbsp;&nbsp;About screen
                             </NavLink>
-                            {/* <NavLink to="/terms-condition" className={linkClasses}>
+                            <NavLink to="/terms-condition" className={linkClasses}>
                                 <LuFileTerminal size={20} /> &nbsp;&nbsp;&nbsp;Terms and Condition
-                            </NavLink> */}
+                            </NavLink>
                         </>
                     )}
-
-                    <div className={sectionTitle}>Logs</div>
-                    <NavLink to="/user-logs" className={linkClasses}>
-                        <TbLogs size={20} /> &nbsp;&nbsp;&nbsp;User Activity
-                    </NavLink>
+                    {permissions.includes("user-logs") && (
+                        <>
+                            <div className={sectionTitle}>Logs</div>
+                            <NavLink to="/user-logs" className={linkClasses}>
+                                <TbLogs size={20} /> &nbsp;&nbsp;&nbsp;User Activity
+                            </NavLink>
+                        </>
+                    )}
                 </nav>
             </aside>
         </>
