@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import toast from "react-hot-toast";
 
 const ALL_PERMISSIONS = [
     "dashboard",
@@ -46,8 +47,14 @@ export default function RoleManager() {
             { id: selectedRole._id, permissions: selectedPermissions },
             { headers: { Authorization: `Bearer ${token}` } }
         );
+        const res = await api.get("/role/");
+        setRoles(res.data.data);
+
+        const updatedRole = res.data.data.find(r => r._id === selectedRole._id);
+        setSelectedRole(updatedRole);
+
         setSaving(false);
-        alert("Permissions updated!");
+        toast.success("Permissions updated!");
     };
 
     return (

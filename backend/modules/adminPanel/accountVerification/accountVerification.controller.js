@@ -59,7 +59,8 @@ exports.verificaionAccountList = async (req, res, next) => {
             $or: [
                 { accountVerification: "not verified" },
                 { accountVerification: "rejected" }
-            ]
+            ],
+            signUpCompleted: "true"
         })
             .populate('accountTypeId')
             .lean();

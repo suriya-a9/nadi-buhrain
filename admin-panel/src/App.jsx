@@ -337,7 +337,7 @@ export default function App() {
               path="/user-logs"
               element={
                 <PrivateRoute>
-                  <PermissionRoute permission="Settings">
+                  <PermissionRoute permission="user-logs">
                     <DashboardLayout>
                       <Logs />
                     </DashboardLayout>

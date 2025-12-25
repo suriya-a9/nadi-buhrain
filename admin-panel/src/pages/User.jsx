@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Table from "../components/Table";
 import Pagination from "../components/Pagination";
+import toast from "react-hot-toast";
 
 export default function User() {
     const [users, setUsers] = useState([]);
@@ -26,7 +27,7 @@ export default function User() {
             const res = await api.get("/account-verify/all-user-list");
             setUsers(res.data.data || []);
         } catch (err) {
-            console.error(err);
+            toast.error(err.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -38,8 +39,7 @@ export default function User() {
             setSelectedUser(res.data.data);
             setDetailsOpen(true);
         } catch (err) {
-            console.error(err);
-            alert("Failed to load details");
+            toast.error(err.response?.data?.message);
         }
     };
 
@@ -49,14 +49,15 @@ export default function User() {
 
     const toggleUserStatus = async (user) => {
         try {
-            await api.post(
+            const res = await api.post(
                 "/account-verify/set-status",
                 { id: user._id, status: !user.accountStatus },
                 { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
             );
+            toast.success(res.data.message);
             loadUsers();
         } catch (err) {
-            alert("Failed to update user status");
+            toast.error(err.response?.data?.message);
         }
     };
 

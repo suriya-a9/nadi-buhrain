@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import Offcanvas from "../components/Offcanvas";
+import toast from "react-hot-toast";
 
 export default function Intro() {
     const [introList, setIntroList] = useState([]);
@@ -13,10 +14,14 @@ export default function Intro() {
     const token = localStorage.getItem("token");
 
     const loadIntro = async () => {
-        const res = await api.get("/intro/list", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        setIntroList(res.data.data || []);
+        try {
+            const res = await api.get("/intro/list", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setIntroList(res.data.data || []);
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
 
     useEffect(() => {
@@ -44,17 +49,23 @@ export default function Intro() {
             id: form.id,
             content: form.content
         };
-        if (!form.id) {
-            await api.post("/intro/add", body, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-        } else {
-            await api.post("/intro/update", body, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+        try {
+            if (!form.id) {
+                const res = await api.post("/intro/add", body, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success(res.data.message);
+            } else {
+                const res = await api.post("/intro/update", body, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success(res.data.message);
+            }
+            setOpen(false);
+            loadIntro();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
         }
-        setOpen(false);
-        loadIntro();
     };
 
     const editIntro = (intro) => {
@@ -66,21 +77,31 @@ export default function Intro() {
     };
 
     const deleteIntro = async (id) => {
-        await api.post(
-            "/intro/delete",
-            { id },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        loadIntro();
+        try {
+            const res = await api.post(
+                "/intro/delete",
+                { id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success(res.data.message);
+            loadIntro();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
 
     const toggleStatus = async (id, status) => {
-        await api.post(
-            "/intro/set-status",
-            { id, status: !status },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        loadIntro();
+        try {
+            const res = await api.post(
+                "/intro/set-status",
+                { id, status: !status },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success(res.data.message);
+            loadIntro();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
 
     return (

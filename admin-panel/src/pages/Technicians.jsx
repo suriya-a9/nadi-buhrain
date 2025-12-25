@@ -25,8 +25,12 @@ export default function Technicians() {
         setCurrentPage(1);
     }, [technicians]);
     const loadSkills = async () => {
-        const res = await api.get("/technical");
-        setSkills(res.data.data);
+        try {
+            const res = await api.get("/technical");
+            setSkills(res.data.data);
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
     useEffect(() => {
         loadTechnicians();
@@ -83,15 +87,18 @@ export default function Technicians() {
         Object.keys(form).forEach((key) => fd.append(key, form[key]));
 
         if (editData) fd.append("id", editData._id);
-
-        await api.post(
-            editData ? "/technician/update-profile" : "/technician/register",
-            fd,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        setOpenCanvas(false);
-        loadTechnicians();
+        try {
+            const res = await api.post(
+                editData ? "/technician/update-profile" : "/technician/register",
+                fd,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success(res.data.message);
+            setOpenCanvas(false);
+            loadTechnicians();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
     const toggleTechnicianStatus = async (tech) => {
         try {

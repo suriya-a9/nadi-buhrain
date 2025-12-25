@@ -3,6 +3,7 @@ import api from "../services/api";
 import Table from "../components/Table";
 import Offcanvas from "../components/Offcanvas";
 import Pagination from "../components/Pagination";
+import toast from "react-hot-toast";
 
 export default function TechnicianSkills() {
     const [technicianSkill, setTechnicianSkill] = useState([]);
@@ -18,8 +19,12 @@ export default function TechnicianSkills() {
     }, [technicianSkill]);
     const token = localStorage.getItem("token");
     const loadTechnicianSkill = async () => {
-        const res = await api.get("/technical");
-        setTechnicianSkill(res.data.data);
+        try {
+            const res = await api.get("/technical");
+            setTechnicianSkill(res.data.data);
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
     useEffect(() => {
         loadTechnicianSkill();
@@ -43,23 +48,32 @@ export default function TechnicianSkills() {
         e.preventDefault();
         const payload = { ...form };
         if (editData) payload.id = editData._id;
-
-        await api.post(
-            editData ? "/technical/update" : "/technical/add",
-            payload,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setOpenCanvas(false);
-        loadTechnicianSkill();
+        try {
+            const res = await api.post(
+                editData ? "/technical/update" : "/technical/add",
+                payload,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success(res.data.message);
+            setOpenCanvas(false);
+            loadTechnicianSkill();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
 
     const deleteTechnicianSkill = async (id) => {
-        await api.post(
-            "/technical/delete",
-            { id },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        loadTechnicianSkill();
+        try {
+            const res = await api.post(
+                "/technical/delete",
+                { id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success(res.data.message);
+            loadTechnicianSkill();
+        } catch (err) {
+            toast.error(err.response?.data?.message);
+        }
     };
     const totalPages = Math.ceil(technicianSkill.length / ITEMS_PER_PAGE);
 
