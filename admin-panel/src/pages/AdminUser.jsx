@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Offcanvas from "../components/Offcanvas";
 import toast from "react-hot-toast";
+import Table from "../components/Table";
+import Pagination from "../components/Pagination";
 
 export default function AdminUser() {
     const [admins, setAdmins] = useState([]);
@@ -15,6 +17,9 @@ export default function AdminUser() {
         role: "",
     });
     const [loading, setLoading] = useState(false);
+
+    const ITEMS_PER_PAGE = 10;
+    const [currentPage, setCurrentPage] = useState(1);
 
     const token = localStorage.getItem("token");
 
@@ -99,6 +104,12 @@ export default function AdminUser() {
         }
     };
 
+    const totalPages = Math.ceil(admins.length / ITEMS_PER_PAGE);
+    const paginatedAdmins = admins.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
@@ -111,37 +122,46 @@ export default function AdminUser() {
                 </button>
             </div>
 
-            <table className="min-w-full bg-white border">
-                <thead>
-                    <tr>
-                        <th className="border px-4 py-2">Name</th>
-                        <th className="border px-4 py-2">Email</th>
-                        <th className="border px-4 py-2">Role</th>
-                        <th className="border px-4 py-2">Created At</th>
-                        <th className="border px-4 py-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {admins.map(admin => (
-                        <tr key={admin._id}>
-                            <td className="border px-4 py-2">{admin.name}</td>
-                            <td className="border px-4 py-2">{admin.email}</td>
-                            <td className="border px-4 py-2 capitalize">
-                                {admin.role?.name || ""}
-                            </td>
-                            <td className="border px-4 py-2">{new Date(admin.createdAt).toLocaleString()}</td>
-                            <td className="border px-4 py-2">
-                                <button
-                                    onClick={() => openEdit(admin)}
-                                    className="bg-yellow-500 text-white px-3 py-1 rounded"
-                                >
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <Table
+                columns={[
+                    {
+                        title: "s/no",
+                        key: "sno",
+                        render: (_, __, idx) =>
+                            (currentPage - 1) * ITEMS_PER_PAGE + idx + 1,
+                    },
+                    { title: "Name", key: "name" },
+                    { title: "Email", key: "email" },
+                    {
+                        title: "Role",
+                        key: "role",
+                        render: (role) => role?.name || "",
+                    },
+                    {
+                        title: "Created At",
+                        key: "createdAt",
+                        render: (createdAt) =>
+                            new Date(createdAt).toLocaleString(),
+                    },
+                ]}
+                data={paginatedAdmins}
+                actions={(row) => (
+                    <button
+                        onClick={() => openEdit(row)}
+                        className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                        Edit
+                    </button>
+                )}
+            />
+
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
 
             <Offcanvas
                 open={openCanvas}

@@ -141,6 +141,12 @@ export default function Technicians() {
 
             <Table
                 columns={[
+                    {
+                        title: "s/no",
+                        key: "sno",
+                        render: (_, __, idx) =>
+                            (currentPage - 1) * ITEMS_PER_PAGE + idx + 1,
+                    },
                     { title: "First Name", key: "firstName" },
                     { title: "Last Name", key: "lastName" },
                     { title: "Mobile", key: "mobile" },
@@ -172,12 +178,12 @@ export default function Technicians() {
                         >
                             {row.status ? "Disable" : "Enable"}
                         </button>
-                        {/* <button
+                        <button
                             onClick={() => deleteTechnician(row._id)}
                             className="bg-red-600 text-white px-3 py-1 rounded"
                         >
                             Delete
-                        </button> */}
+                        </button>
                     </div>
                 )}
             />
