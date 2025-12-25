@@ -33,6 +33,7 @@ import ServiceRequestDetails from "./pages/ServiceRequestDetails";
 import AdminUser from "./pages/AdminUser";
 import RoleManager from "./pages/RoleManager";
 import Roles from "./pages/Roles";
+import ForgotPassword from "./pages/ForgotPassword";
 
 export default function App() {
   return (
@@ -53,6 +54,14 @@ export default function App() {
               element={
                 <PublicRoute>
                   <Register />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPassword />
                 </PublicRoute>
               }
             />
