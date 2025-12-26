@@ -173,7 +173,12 @@ export default function LoadingScreen() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex flex-col gap-1">
-                        <label className="block mb-1 font-medium">Select Image / Video <span className="text-xs">(size: 375px X 375px)</span></label>
+                        <label className="block mb-1 font-medium">
+                            Select Image / Video <br/>
+                            <span className="text-xs">
+                                (Image: 375×375px, Video: 1080×1920px)
+                            </span>
+                        </label>
                         <input
                             type="file"
                             name="image"
