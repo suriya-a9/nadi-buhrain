@@ -176,3 +176,35 @@ exports.resetPassword = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.deleteAdminUser = async () => {
+    const { id } = req.body;
+    try {
+        if (!req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'user id needed'
+            })
+        }
+        const adminUser = await Admin.findByIdAndDelete(id);
+        if (!adminUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'user not found'
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "Admin user deleted"
+        })
+        await UserLog.create({
+            userId: req.user.id,
+            log: "Deleted admin user",
+            status: "Deleted",
+            logo: "/assets/user-login-logo.webp",
+            time: new Date()
+        });
+    } catch (err) {
+        next(err)
+    }
+}
