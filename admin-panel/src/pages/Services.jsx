@@ -182,7 +182,7 @@ export default function Services() {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label className="block mb-1 font-medium">Service Image</label>
+                        <label className="block mb-1 font-medium">Service Image <span className="text-xs">(size: 375px X 375px)</span></label>
                         <input
                             type="file"
                             name="serviceImage"
@@ -192,7 +192,7 @@ export default function Services() {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                        <label className="block mb-1 font-medium">Service Logo</label>
+                        <label className="block mb-1 font-medium">Service Logo <span className="text-xs">(size: 64px X 64px)</span></label>
                         <input
                             type="file"
                             name="serviceLogo"

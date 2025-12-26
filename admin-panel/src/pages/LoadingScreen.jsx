@@ -151,7 +151,6 @@ export default function LoadingScreen() {
                 </div>
             )}
 
-            {/* Media Modal */}
             {mediaModal.open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={() => setMediaModal({ open: false, url: "", type: "" })}>
                     <div className="bg-white rounded-lg p-4 max-w-lg w-full relative" onClick={e => e.stopPropagation()}>
@@ -174,7 +173,7 @@ export default function LoadingScreen() {
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex flex-col gap-1">
-                        <label className="block mb-1 font-medium">Select Image</label>
+                        <label className="block mb-1 font-medium">Select Image / Video <span className="text-xs">(size: 375px X 375px)</span></label>
                         <input
                             type="file"
                             name="image"
