@@ -1,12 +1,12 @@
-const admin = require("firebase-admin");
-const config = require("./default");
+// const admin = require("firebase-admin");
+// const config = require("./default");
 
-const serviceAccount = JSON.parse(config.firebase);
+// const serviceAccount = JSON.parse(config.firebase);
 
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
-}
+// if (!admin.apps.length) {
+//     admin.initializeApp({
+//         credential: admin.credential.cert(serviceAccount),
+//     });
+// }
 
-module.exports = admin;
+// module.exports = admin;
