@@ -5,20 +5,37 @@ const UserLog = require("../../userLogs/userLogs.model");
 
 exports.uploadLoadingScreen = async (req, res, next) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+    const imageFile = req.files?.image?.[0];
+    const videoFile = req.files?.video?.[0];
+
+    if (!imageFile && !videoFile) {
+      return res.status(400).json({
+        message: "Upload either an image or a video",
+      });
     }
-    const saved = await Loading.create({ image: req.file.filename });
+
+    if (imageFile && videoFile) {
+      return res.status(400).json({
+        message: "Upload only one: image OR video",
+      });
+    }
+
+    const saved = await Loading.create({
+      image: imageFile ? imageFile.filename : null,
+      video: videoFile ? videoFile.filename : null,
+    });
+
     await UserLog.create({
       userId: req.user.id,
       log: "Loading content added",
       status: "Created",
       logo: "/assets/loading.webp",
-      time: new Date()
+      time: new Date(),
     });
-    return res.json({
-      message: "File uploaded successfully",
-      file: req.file.filename,
+
+    res.status(201).json({
+      message: "Uploaded successfully",
+      type: imageFile ? "image" : "video",
       data: saved,
     });
   } catch (err) {
@@ -47,68 +64,69 @@ const uploadFolder = path.join(process.cwd(), "uploads");
 exports.updateLoadingScreen = async (req, res, next) => {
   try {
     const { id } = req.body;
+    const imageFile = req.files?.image?.[0];
+    const videoFile = req.files?.video?.[0];
 
-    if (!id) {
-      return res.status(400).json({ message: "ID is required" });
+    if (!id) return res.status(400).json({ message: "ID required" });
+    if (!imageFile && !videoFile)
+      return res.status(400).json({ message: "Upload image or video" });
+    if (imageFile && videoFile)
+      return res.status(400).json({ message: "Only one allowed" });
+
+    const loading = await Loading.findById(id);
+    if (!loading) return res.status(404).json({ message: "Not found" });
+
+    const uploadFolder = path.join(process.cwd(), "uploads");
+
+    const oldFile = loading.image || loading.video;
+    if (oldFile) {
+      const p = path.join(uploadFolder, oldFile);
+      if (fs.existsSync(p)) fs.unlinkSync(p);
     }
 
-    const loadingItem = await Loading.findById(id);
+    loading.image = imageFile ? imageFile.filename : null;
+    loading.video = videoFile ? videoFile.filename : null;
 
-    if (!loadingItem) {
-      return res.status(404).json({ message: "Loading screen entry not found" });
-    }
+    await loading.save();
 
-    if (!req.file) {
-      return res.status(400).json({ message: "No new image uploaded" });
-    }
-
-    const oldImage = loadingItem.image;
-    const newImage = req.file.filename;
-
-    if (oldImage) {
-      const oldImagePath = path.join(uploadFolder, oldImage);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
-
-    loadingItem.image = newImage;
-    await loadingItem.save();
-    await UserLog.create({
-      userId: req.user.id,
-      log: "Loading content Updated",
-      status: "Updated",
-      logo: "/assets/loading.webp",
-      time: new Date()
-    });
-    res.status(200).json({
-      message: "Loading screen updated successfully",
-      data: loadingItem,
-    });
-
+    res.json({ message: "Updated", data: loading });
   } catch (err) {
     next(err);
   }
 };
 
 exports.deleteLoadingScreen = async (req, res, next) => {
-  const { id } = req.body;
   try {
-    await Loading.findByIdAndDelete(id);
+    const { id } = req.body;
+
+    const loadingItem = await Loading.findById(id);
+    if (!loadingItem) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    const uploadFolder = path.join(process.cwd(), "uploads");
+    const fileToDelete = loadingItem.image || loadingItem.video;
+
+    if (fileToDelete) {
+      const filePath = path.join(uploadFolder, fileToDelete);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    await loadingItem.deleteOne();
+
     await UserLog.create({
       userId: req.user.id,
-      log: "Loading content Deleted",
+      log: "Loading content deleted",
       status: "Deleted",
       logo: "/assets/loading.webp",
-      time: new Date()
+      time: new Date(),
     });
-    res.status(200).json({
-      message: "Deleted successfully"
-    })
+
+    res.status(200).json({ message: "Deleted successfully" });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 exports.listAllLoadingScreens = async (req, res, next) => {
   try {

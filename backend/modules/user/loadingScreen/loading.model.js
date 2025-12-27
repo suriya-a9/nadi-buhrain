@@ -4,7 +4,11 @@ const loadingSchema = new mongoose.Schema(
   {
     image: {
       type: String,
-      required: true,
+      default: null,
+    },
+    video: {
+      type: String,
+      default: null,
     },
     enabled: {
       type: Boolean,
@@ -13,5 +17,6 @@ const loadingSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const Loading = mongoose.model("Loading", loadingSchema);
 module.exports = Loading;

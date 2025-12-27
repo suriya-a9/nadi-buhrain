@@ -5,8 +5,16 @@ import Offcanvas from "../components/Offcanvas";
 export default function LoadingScreen() {
     const [screens, setScreens] = useState([]);
     const [open, setOpen] = useState(false);
-    const [form, setForm] = useState({ id: "", image: null });
-    const [mediaModal, setMediaModal] = useState({ open: false, url: "", type: "" });
+    const [form, setForm] = useState({
+        id: "",
+        image: null,
+        video: null,
+    });
+    const [mediaModal, setMediaModal] = useState({
+        open: false,
+        url: "",
+        type: "",
+    });
 
     const token = localStorage.getItem("token");
 
@@ -22,13 +30,29 @@ export default function LoadingScreen() {
     }, []);
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.files[0] });
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.type.startsWith("image/")) {
+            setForm((prev) => ({ ...prev, image: file, video: null }));
+        } else if (file.type.startsWith("video/")) {
+            setForm((prev) => ({ ...prev, video: file, image: null }));
+        } else {
+            alert("Only image or video allowed");
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!form.image && !form.video) {
+            alert("Please select an image or a video");
+            return;
+        }
+
         const formData = new FormData();
         if (form.image) formData.append("image", form.image);
+        if (form.video) formData.append("video", form.video);
         if (form.id) formData.append("id", form.id);
 
         await api.post(
@@ -43,19 +67,11 @@ export default function LoadingScreen() {
         );
 
         setOpen(false);
-        setForm({ id: "", image: null });
-        loadScreens();
-    };
-    const setEnabled = async (row, enabled) => {
-        await api.post(
-            "/user/loading/set-enabled",
-            { id: row._id, enabled },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+        setForm({ id: "", image: null, video: null });
         loadScreens();
     };
     const editScreen = (row) => {
-        setForm({ id: row._id, image: null });
+        setForm({ id: row._id, image: null, video: null });
         setOpen(true);
     };
 
@@ -68,18 +84,28 @@ export default function LoadingScreen() {
         loadScreens();
     };
 
-    // Helper to determine file type
-    const getMediaType = (filename) => {
-        const ext = filename.split('.').pop().toLowerCase();
-        if (["mp4", "webm", "ogg"].includes(ext)) return "video";
-        if (["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(ext)) return "image";
-        return "unknown";
+    const setEnabled = async (row, enabled) => {
+        await api.post(
+            "/user/loading/set-enabled",
+            { id: row._id, enabled },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        loadScreens();
     };
-
     const handleMediaClick = (screen) => {
-        const url = `${import.meta.env.VITE_API_URL}/uploads/${screen.image}`;
-        const type = getMediaType(screen.image);
-        setMediaModal({ open: true, url, type });
+        if (screen.image) {
+            setMediaModal({
+                open: true,
+                url: `${import.meta.env.VITE_API_URL}/uploads/${screen.image}`,
+                type: "image",
+            });
+        } else if (screen.video) {
+            setMediaModal({
+                open: true,
+                url: `${import.meta.env.VITE_API_URL}/uploads/${screen.video}`,
+                type: "video",
+            });
+        }
     };
 
     return (
@@ -88,7 +114,10 @@ export default function LoadingScreen() {
                 <h2 className="text-2xl font-semibold">Loading Screen</h2>
                 <button
                     className="bg-bgGreen text-white px-4 py-2 rounded"
-                    onClick={() => setForm({ id: "", image: null }) || setOpen(true)}
+                    onClick={() => {
+                        setForm({ id: "", image: null, video: null });
+                        setOpen(true);
+                    }}
                 >
                     + Upload New
                 </button>
@@ -98,8 +127,11 @@ export default function LoadingScreen() {
                 <div className="text-center text-gray-500 py-10">
                     <p className="text-lg">No loading screen uploaded yet.</p>
                     <button
-                        className="mt-4 bg-bgGreen hover:bg-bgGreen text-white px-4 py-2 rounded shadow-md transition-all"
-                        onClick={() => setForm({ id: "", image: null }) || setOpen(true)}
+                        className="mt-4 bg-bgGreen text-white px-4 py-2 rounded"
+                        onClick={() => {
+                            setForm({ id: "", image: null, video: null });
+                            setOpen(true);
+                        }}
                     >
                         ➕ Upload Loading Screen
                     </button>
@@ -107,40 +139,47 @@ export default function LoadingScreen() {
             ) : (
                 <div className="space-y-4">
                     {screens.map((screen) => (
-                        <div key={screen._id} className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-                            <div className="bg-gray-100 p-4 flex justify-center cursor-pointer" onClick={() => handleMediaClick(screen)}>
-                                {getMediaType(screen.image) === "image" ? (
+                        <div
+                            key={screen._id}
+                            className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden"
+                        >
+                            <div
+                                className="bg-gray-100 p-4 flex justify-center cursor-pointer"
+                                onClick={() => handleMediaClick(screen)}
+                            >
+                                {screen.image ? (
                                     <img
                                         src={`${import.meta.env.VITE_API_URL}/uploads/${screen.image}`}
-                                        alt="Loading Screen"
                                         className="h-48 object-contain rounded border"
                                     />
-                                ) : getMediaType(screen.image) === "video" ? (
+                                ) : screen.video ? (
                                     <video
-                                        src={`${import.meta.env.VITE_API_URL}/uploads/${screen.image}`}
+                                        src={`${import.meta.env.VITE_API_URL}/uploads/${screen.video}`}
                                         className="h-48 object-contain rounded border"
                                         muted
                                         preload="metadata"
                                     />
                                 ) : (
-                                    <span>Unsupported file</span>
+                                    <span>No media</span>
                                 )}
                             </div>
+
                             <div className="p-4 flex justify-end gap-2">
                                 <button
-                                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition"
+                                    className="bg-yellow-500 text-white px-4 py-2 rounded"
                                     onClick={() => editScreen(screen)}
                                 >
                                     Replace
                                 </button>
                                 <button
-                                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+                                    className="bg-red-600 text-white px-4 py-2 rounded"
                                     onClick={() => deleteScreen(screen)}
                                 >
                                     Delete
                                 </button>
                                 <button
-                                    className={`px-4 py-2 rounded transition ${screen.enabled ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 hover:bg-gray-500"} text-white`}
+                                    className={`px-4 py-2 rounded text-white ${screen.enabled ? "bg-green-600" : "bg-gray-400"
+                                        }`}
                                     onClick={() => setEnabled(screen, !screen.enabled)}
                                 >
                                     {screen.enabled ? "Disable" : "Enable"}
@@ -152,15 +191,32 @@ export default function LoadingScreen() {
             )}
 
             {mediaModal.open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={() => setMediaModal({ open: false, url: "", type: "" })}>
-                    <div className="bg-white rounded-lg p-4 max-w-lg w-full relative" onClick={e => e.stopPropagation()}>
-                        <button className="absolute top-2 right-2 text-gray-700" onClick={() => setMediaModal({ open: false, url: "", type: "" })}>✕</button>
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+                    onClick={() => setMediaModal({ open: false, url: "", type: "" })}
+                >
+                    <div
+                        className="bg-white rounded-lg p-4 max-w-lg w-full relative"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            className="absolute top-2 right-2"
+                            onClick={() =>
+                                setMediaModal({ open: false, url: "", type: "" })
+                            }
+                        >
+                            ✕
+                        </button>
+
                         {mediaModal.type === "image" ? (
-                            <img src={mediaModal.url} alt="Preview" className="w-full h-auto rounded" />
-                        ) : mediaModal.type === "video" ? (
-                            <video src={mediaModal.url} controls autoPlay className="w-full h-auto rounded" />
+                            <img src={mediaModal.url} className="w-full rounded" />
                         ) : (
-                            <span>Unsupported file</span>
+                            <video
+                                src={mediaModal.url}
+                                controls
+                                autoPlay
+                                className="w-full rounded"
+                            />
                         )}
                     </div>
                 </div>
@@ -172,16 +228,14 @@ export default function LoadingScreen() {
                 title={form.id ? "Update Loading Screen" : "Upload Loading Screen"}
             >
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex flex-col gap-1">
-                        <label className="block mb-1 font-medium">
-                            Select Image / Video <br/>
-                            <span className="text-xs">
-                                (Image: 375×375px, Video: 1080×1920px)
-                            </span>
+                    <div>
+                        <label className="font-medium block mb-1">
+                            Select Image / Video
                         </label>
                         <input
+                            key={open ? "open" : "closed"}
                             type="file"
-                            name="image"
+                            accept="image/*,video/*"
                             onChange={handleChange}
                             className="border p-2 rounded w-full"
                         />
