@@ -20,11 +20,11 @@ const userAccountSchema = new mongoose.Schema({
         },
         mobileNumber: {
             type: Number,
-            // unique: true
+            unique: true
         },
         email: {
             type: String,
-            // unique: true
+            unique: true
         },
         gender: {
             type: String,

@@ -33,19 +33,19 @@ exports.startSignUp = async (req, res, next) => {
 exports.saveBasicInfo = async (req, res, next) => {
     const { userId, fullName, mobileNumber, email, gender, password } = req.body;
     try {
-        // const existingUser = await UserAccount.findOne({
-        //     _id: { $ne: userId },
-        //     $or: [
-        //         { "basicInfo.mobileNumber": mobileNumber },
-        //         { "basicInfo.email": email }
-        //     ]
-        // });
+        const existingUser = await UserAccount.findOne({
+            _id: { $ne: userId },
+            $or: [
+                { "basicInfo.mobileNumber": mobileNumber },
+                { "basicInfo.email": email }
+            ]
+        });
 
-        // if (existingUser) {
-        //     return res.status(400).json({
-        //         message: "Account already registered"
-        //     });
-        // }
+        if (existingUser) {
+            return res.status(400).json({
+                message: "Account already registered"
+            });
+        }
         const user = await UserAccount.findById(userId);
         const hashedPassword = await bcrypt.hash(password, 10)
         const addBasicInfo = await UserAccount.findByIdAndUpdate(user, {
@@ -206,23 +206,23 @@ exports.addFamilyMember = async (req, res, next) => {
         if (!userId) {
             return res.status(400).json({ message: "user id needed" });
         }
-        // const existingUser = await UserAccount.findOne({
-        //     $or: [
-        //         { "basicInfo.mobileNumber": mobile },
-        //         { "basicInfo.email": email }
-        //     ]
-        // });
+        const existingUser = await UserAccount.findOne({
+            $or: [
+                { "basicInfo.mobileNumber": mobile },
+                { "basicInfo.email": email }
+            ]
+        });
 
-        // const existingFamily = await FamilyMember.findOne({
-        //     $or: [
-        //         { mobile },
-        //         { email }
-        //     ]
-        // });
+        const existingFamily = await FamilyMember.findOne({
+            $or: [
+                { mobile },
+                { email }
+            ]
+        });
 
-        // if (existingUser || existingFamily) {
-        //     return res.status(400).json({ message: "Mobile number or email already registered" });
-        // }
+        if (existingUser || existingFamily) {
+            return res.status(400).json({ message: "Mobile number or email already registered" });
+        }
 
         const addressDoc = await Address.create({
             ...address
