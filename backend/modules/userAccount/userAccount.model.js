@@ -6,6 +6,10 @@ const userAccountSchema = new mongoose.Schema({
         ref: "Account",
         required: true
     },
+    fcmToken: {
+        type: String,
+        default: null
+    },
     step: {
         type: Number,
         default: 1
@@ -16,11 +20,11 @@ const userAccountSchema = new mongoose.Schema({
         },
         mobileNumber: {
             type: Number,
-            unique: true
+            // unique: true
         },
         email: {
             type: String,
-            unique: true
+            // unique: true
         },
         gender: {
             type: String,

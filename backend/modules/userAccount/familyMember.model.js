@@ -12,11 +12,11 @@ const familyMemberSchema = new mongoose.Schema({
     },
     mobile: {
         type: Number,
-        unique: true
+        // unique: true
     },
     email: {
         type: String,
-        unique: true
+        // unique: true
     },
     password: String,
     gender: {

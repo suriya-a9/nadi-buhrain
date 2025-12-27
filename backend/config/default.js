@@ -8,5 +8,6 @@ const config = {
     mail_user: process.env.EMAIL_USER,
     mail_pass: process.env.EMAIL_PASS,
     frontend: process.env.FRONTEND_URL,
+    firebase: process.env.FIREBASE_SERVICE_ACCOUNT
 }
 module.exports = config;

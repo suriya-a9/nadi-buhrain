@@ -7,6 +7,7 @@ const config = require('../../config/default');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Notification = require('../adminPanel/notification/notification.model');
+const sendPushNotification = require("../../utils/sendPush");
 const UserLog = require('../userLogs/userLogs.model');
 
 exports.startSignUp = async (req, res, next) => {
@@ -32,19 +33,19 @@ exports.startSignUp = async (req, res, next) => {
 exports.saveBasicInfo = async (req, res, next) => {
     const { userId, fullName, mobileNumber, email, gender, password } = req.body;
     try {
-        const existingUser = await UserAccount.findOne({
-            _id: { $ne: userId },
-            $or: [
-                { "basicInfo.mobileNumber": mobileNumber },
-                { "basicInfo.email": email }
-            ]
-        });
+        // const existingUser = await UserAccount.findOne({
+        //     _id: { $ne: userId },
+        //     $or: [
+        //         { "basicInfo.mobileNumber": mobileNumber },
+        //         { "basicInfo.email": email }
+        //     ]
+        // });
 
-        if (existingUser) {
-            return res.status(400).json({
-                message: "Account already registered"
-            });
-        }
+        // if (existingUser) {
+        //     return res.status(400).json({
+        //         message: "Account already registered"
+        //     });
+        // }
         const user = await UserAccount.findById(userId);
         const hashedPassword = await bcrypt.hash(password, 10)
         const addBasicInfo = await UserAccount.findByIdAndUpdate(user, {
@@ -93,25 +94,49 @@ exports.saveAddress = async (req, res, next) => {
 
 exports.sendOtp = async (req, res, next) => {
     const { userId } = req.body;
+
     try {
-        if (!req.body.userId) {
+        if (!userId) {
             return res.status(400).json({
                 message: "user id needed"
-            })
+            });
         }
+
+        const user = await UserAccount.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
         await Otp.create({
             userId,
             otp,
             expiresAt: Date.now() + 1 * 60 * 1000,
-        })
-        await UserAccount.findByIdAndUpdate(userId, { step: 4, status: "pending_otp" });
+        });
 
-        res.json({ otp, message: "OTP sent" });
+        await UserAccount.findByIdAndUpdate(userId, {
+            step: 4,
+            status: "pending_otp"
+        });
+
+        await sendPushNotification(
+            user.fcmToken,
+            "OTP Verification",
+            `Your OTP is ${otp}. Valid for 1 minute.`
+        );
+
+        res.json({
+            message: "OTP sent"
+        });
+
     } catch (err) {
         next(err);
     }
-}
+};
 
 exports.verifyOtp = async (req, res, next) => {
     const { userId, otp } = req.body;
@@ -181,23 +206,23 @@ exports.addFamilyMember = async (req, res, next) => {
         if (!userId) {
             return res.status(400).json({ message: "user id needed" });
         }
-        const existingUser = await UserAccount.findOne({
-            $or: [
-                { "basicInfo.mobileNumber": mobile },
-                { "basicInfo.email": email }
-            ]
-        });
+        // const existingUser = await UserAccount.findOne({
+        //     $or: [
+        //         { "basicInfo.mobileNumber": mobile },
+        //         { "basicInfo.email": email }
+        //     ]
+        // });
 
-        const existingFamily = await FamilyMember.findOne({
-            $or: [
-                { mobile },
-                { email }
-            ]
-        });
+        // const existingFamily = await FamilyMember.findOne({
+        //     $or: [
+        //         { mobile },
+        //         { email }
+        //     ]
+        // });
 
-        if (existingUser || existingFamily) {
-            return res.status(400).json({ message: "Mobile number or email already registered" });
-        }
+        // if (existingUser || existingFamily) {
+        //     return res.status(400).json({ message: "Mobile number or email already registered" });
+        // }
 
         const addressDoc = await Address.create({
             ...address
@@ -233,7 +258,7 @@ exports.addFamilyMember = async (req, res, next) => {
 };
 
 exports.termsAndConditionVerify = async (req, res, next) => {
-    const { userId } = req.body;
+    const { userId, fcmToken } = req.body;
     try {
         if (!req.body.userId) {
             res.status(400).json({
@@ -241,8 +266,9 @@ exports.termsAndConditionVerify = async (req, res, next) => {
             })
         }
         await UserAccount.findByIdAndUpdate(userId, {
-            termsVerfied: true
-        })
+            termsVerfied: true,
+            ...(fcmToken && { fcmToken })
+        });
         res.status(200).json({
             message: "verified successfully"
         })
