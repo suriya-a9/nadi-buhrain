@@ -33,9 +33,13 @@ exports.saveBasicInfo = async (req, res, next) => {
     const { userId, fullName, mobileNumber, email, gender, password } = req.body;
     try {
         const existingUser = await UserAccount.findOne({
-            "basicInfo.mobileNumber": mobileNumber,
-            _id: { $ne: userId }
+            _id: { $ne: userId },
+            $or: [
+                { "basicInfo.mobileNumber": mobileNumber },
+                { "basicInfo.email": email }
+            ]
         });
+
         if (existingUser) {
             return res.status(400).json({
                 message: "Account already registered"
@@ -177,11 +181,24 @@ exports.addFamilyMember = async (req, res, next) => {
         if (!userId) {
             return res.status(400).json({ message: "user id needed" });
         }
-        const existingUser = await UserAccount.findOne({ "basicInfo.mobileNumber": mobile });
-        const existingFamily = await FamilyMember.findOne({ mobile });
+        const existingUser = await UserAccount.findOne({
+            $or: [
+                { "basicInfo.mobileNumber": mobile },
+                { "basicInfo.email": email }
+            ]
+        });
+
+        const existingFamily = await FamilyMember.findOne({
+            $or: [
+                { mobile },
+                { email }
+            ]
+        });
+
         if (existingUser || existingFamily) {
-            return res.status(400).json({ message: "Mobile number already registered" });
+            return res.status(400).json({ message: "Mobile number or email already registered" });
         }
+
         const addressDoc = await Address.create({
             ...address
         });
@@ -391,6 +408,89 @@ exports.signIn = async (req, res, next) => {
             logo: "/assets/user-login-logo.webp",
             time: new Date()
         })
+        res.status(200).json({
+            name: user.basicInfo.fullName,
+            token: token,
+            accountType: accountType ? accountType.type : null
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.sendSignInOtp = async (req, res, next) => {
+    const { mobileNumber } = req.body;
+    try {
+        if (!mobileNumber) {
+            return res.status(400).json({ message: "Mobile number required" });
+        }
+        const user = await UserAccount.findOne({ "basicInfo.mobileNumber": mobileNumber });
+        if (!user) {
+            return res.status(404).json({ message: "No account found with this mobile number" });
+        }
+        if (user.status !== "completed") {
+            return res.status(401).json({ message: "Account not created. Kindly register" });
+        }
+        if (user.accountStatus !== true) {
+            return res.status(401).json({ message: "Account disabled" });
+        }
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        await Otp.create({
+            userId: user._id,
+            otp,
+            expiresAt: Date.now() + 2 * 60 * 1000,
+        });
+        res.json({
+            success: true,
+            otp,
+            message: "OTP sent"
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.signInWithOtp = async (req, res, next) => {
+    const { mobileNumber, otp } = req.body;
+    try {
+        if (!mobileNumber || !otp) {
+            return res.status(400).json({ message: "Mobile number and OTP required" });
+        }
+        const user = await UserAccount.findOne({ "basicInfo.mobileNumber": mobileNumber });
+        if (!user) {
+            return res.status(404).json({ message: "No account found with this mobile number" });
+        }
+        if (user.status !== "completed") {
+            return res.status(401).json({ message: "Account not created. Kindly register" });
+        }
+        if (user.accountStatus !== true) {
+            return res.status(401).json({ message: "Account disabled" });
+        }
+        const record = await Otp.findOne({ userId: user._id }).sort({ createdAt: -1 });
+        if (!record) {
+            return res.status(400).json({ message: "OTP not found" });
+        }
+        if (new Date(record.expiresAt).getTime() < Date.now()) {
+            await Otp.deleteMany({ userId: user._id });
+            return res.status(400).json({ message: "OTP expired" });
+        }
+        if (record.otp !== otp) {
+            return res.status(400).json({ message: "OTP mismatch" });
+        }
+        await Otp.deleteMany({ userId: user._id });
+        const accountType = await Account.findById(user.accountTypeId);
+        const token = jwt.sign(
+            { id: user._id },
+            config.jwt,
+            { expiresIn: '30d' }
+        );
+        await UserLog.create({
+            userId: user._id,
+            log: 'Signed In with OTP',
+            status: "Signed In",
+            logo: "/assets/user-login-logo.webp",
+            time: new Date()
+        });
         res.status(200).json({
             name: user.basicInfo.fullName,
             token: token,
